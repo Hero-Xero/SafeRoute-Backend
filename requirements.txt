@@ -1,0 +1,15 @@
+Django
+djangorestframework
+django-cors-headers    
+
+# --- Database & Spatial ---
+psycopg2-binary        # postgres
+
+# --- VRP Engine ---
+ortools                # Google OR-Tools for the math and routing logic
+
+# --- Async & Real-Time ---
+celery                 # To run the heavy OR-Tools math in the background
+redis                  # Message broker for Celery and WebSockets
+channels               # Upgrades Django to handle WebSockets (for Flutter live tracking)
+daphne                 # The ASGI server needed to run Django Channels
