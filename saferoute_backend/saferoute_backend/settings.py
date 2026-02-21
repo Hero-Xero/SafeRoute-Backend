@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -74,8 +75,13 @@ WSGI_APPLICATION = 'saferoute_backend.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': os.environ.get('DB_NAME', 'saferoute_db'),
+        'USER': os.environ.get('DB_USER', 'postuser'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'supersecret'),
+        # Docker automatically resolves the hostname 'db' to the database container
+        'HOST': os.environ.get('DB_HOST', 'db'), 
+        'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
 

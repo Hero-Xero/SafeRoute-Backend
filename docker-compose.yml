@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgis/postgis:18-3.6
+    restart: always
+    environment:
+      - POSTGRES_DB=saferoute_db
+      - POSTGRES_USER=postuser
+      - POSTGRES_PASSWORD=supersecret
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgis_data:/var/lib/postgresql
+
+  backend:
+    build: .
+    command: python saferoute_backend/manage.py runserver 0.0.0.0:8000
+    volumes:
+      # Mounts my live code so i don't have to rebuild on every change
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_NAME=saferoute_db
+      - DB_USER=postuser
+      - DB_PASSWORD=supersecret
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - db
+
+volumes:
+  postgis_data:
