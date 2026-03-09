@@ -1,15 +1,23 @@
-Django
-djangorestframework
-django-cors-headers    
-
-# --- Database & Spatial ---
-psycopg2-binary        # postgres
-
-# --- VRP Engine ---
-ortools                # Google OR-Tools for the math and routing logic
-
-# --- Async & Real-Time ---
-celery                 # To run the heavy OR-Tools math in the background
-redis                  # Message broker for Celery and WebSockets
-channels               # Upgrades Django to handle WebSockets (for Flutter live tracking)
-daphne                 # The ASGI server needed to run Django Channels
+Django==5.1.6
+django-admin-rangefilter==0.13.3
+django-cleanup==9.0.0
+django-cors-headers==4.7.0
+django-countries==7.6.1
+django-filter==25.1
+django-import-export==4.3.9
+django-location-field==2.7.3
+django-nested-admin==4.1.1
+django-otp==1.5.4
+django-parler==2.3
+django-parler-rest==2.2
+django-phonenumber-field==8.0.0
+django-redis==5.4.0
+gunicorn==23.0.0
+pillow==11.1.0
+PyJWT==2.10.1
+redis==5.2.1
+python-dateutil==2.9.0.post0
+psycopg2-binary==2.9.9
+djangorestframework==3.14.0
+djangorestframework-simplejwt==5.3.1
+rq==1.15.0
