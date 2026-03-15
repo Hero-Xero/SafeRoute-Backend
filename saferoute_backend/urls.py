@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from saferoute_backend.admin import saferoute_admin_site
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', saferoute_admin_site.urls),
 ]
