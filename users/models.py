@@ -48,6 +48,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_deleted = models.BooleanField(
         _('Deleted'), default=False, help_text=_('Designates whether the user has deleted their account.'))
 
+    objects = AdminUserManager()
+
 
 class AdminUser(User):
     objects = AdminUserManager()
