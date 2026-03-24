@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 
 from users.enums import GenderChoices, UserTypeChoices
-from users.mangers import DriverManager, GuardianManager, AdminUserManager
+from users.managers import DriverManager, GuardianManager, AdminUserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
