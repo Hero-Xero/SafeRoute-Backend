@@ -77,6 +77,11 @@ class DriverUser(User):
         verbose_name = _('Driver User')
         verbose_name_plural = _('Driver Users')
 
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.type = UserTypeChoices.DRIVER
+        return super().save(*args, **kwargs)
+
 
 class GuardianUser(User):
     objects = GuardianManager()
@@ -88,3 +93,8 @@ class GuardianUser(User):
         ]
         verbose_name = _('Guardian User')
         verbose_name_plural = _('Guardian Users')
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.type = UserTypeChoices.GUARDIAN
+        return super().save(*args, **kwargs)
