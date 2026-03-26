@@ -1,5 +1,5 @@
 from django.contrib.auth import authenticate
-from django.utils.translation import gettext_lazy as _
+from django.utils.translation import gettext as _
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -13,11 +13,14 @@ class SendOtpSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if email and password:
-            user = authenticate(request=self.context.get('request'), email=email, password=password)
+            user = authenticate(request=self.context.get(
+                'request'), email=email, password=password)
             if not user:
-                raise serializers.ValidationError({"detail": _("Unable to log in with provided credentials.")}, code='authorization')
+                raise serializers.ValidationError({"detail": _(
+                    "Unable to log in with provided credentials.")}, code='authorization')
         else:
-            raise serializers.ValidationError({"detail": _("Must include 'email' and 'password'.")}, code='authorization')
+            raise serializers.ValidationError(
+                {"detail": _("Must include 'email' and 'password'.")}, code='authorization')
 
         attrs['user'] = user
         return attrs
@@ -37,11 +40,14 @@ class ResendOtpSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if email and password:
-            user = authenticate(request=self.context.get('request'), email=email, password=password)
+            user = authenticate(request=self.context.get(
+                'request'), email=email, password=password)
             if not user:
-                raise serializers.ValidationError({"detail": _("Incorrect email or password.")}, code='authorization')
+                raise serializers.ValidationError(
+                    {"detail": _("Incorrect email or password.")}, code='authorization')
         else:
-            raise serializers.ValidationError({"detail": _("Must include 'email' and 'password'.")}, code='authorization')
+            raise serializers.ValidationError(
+                {"detail": _("Must include 'email' and 'password'.")}, code='authorization')
 
         attrs['user'] = user
         return attrs
@@ -54,7 +60,11 @@ class SetNewPasswordSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         if attrs['new_password'] != attrs['confirm_password']:
-            raise serializers.ValidationError({"confirm_password": _("Passwords do not match.")})
+            raise serializers.ValidationError(
+                {"confirm_password": _("Passwords do not match.")})
+        if attrs['old_password'] == attrs['new_password']:
+            raise serializers.ValidationError(
+                {"new_password": _("New password cannot be the same as old password.")})
         return attrs
 
 
@@ -66,17 +76,18 @@ class SetInitialPasswordSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         if attrs['new_password'] != attrs['confirm_password']:
-            raise serializers.ValidationError({"confirm_password": _("Passwords do not match.")})
-        
+            raise serializers.ValidationError(
+                {"confirm_password": _("Passwords do not match.")})
+
         # Enforce strong password policies
         from django.contrib.auth.password_validation import validate_password
         try:
             validate_password(attrs['new_password'])
         except Exception as e:
-            raise serializers.ValidationError({"new_password": list(e.messages)})
-            
+            raise serializers.ValidationError(
+                {"new_password": list(e.messages)})
+
         return attrs
-from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class RefreshTokenSerializer(serializers.Serializer):

@@ -67,7 +67,7 @@ class AdminUserAdmin(UserAdmin):
 
 
 class DriverUserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'email', 'first_name',
+    list_display = ('email', 'first_name',
                     'last_name', 'phone_number', 'is_active')
     list_filter = ('is_active',)
     search_fields = ('email', 'first_name', 'last_name', 'phone_number')
@@ -119,7 +119,7 @@ class DriverUserAdmin(admin.ModelAdmin):
 
 
 class GuardianUserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'email', 'first_name',
+    list_display = ('email', 'first_name',
                     'last_name', 'phone_number', 'is_active')
     list_filter = ('is_active',)
     search_fields = ('email', 'first_name', 'last_name', 'phone_number')

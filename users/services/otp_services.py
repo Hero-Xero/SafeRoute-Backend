@@ -28,8 +28,7 @@ class AbstractOtpService:
         self.otp_timeout_seconds = otp_timeout_seconds or self.OTP_TIMEOUT_SECONDS
 
     def get_cache_key(self) -> str:
-        model = self.obj.__class__.__name__.lower()
-        return f'{self.purpose}:{model}:{self.obj.id}'
+        return f'{self.purpose}:user:{self.obj.id}'
 
     def generate_or_get_otp(self, force: bool = False) -> Tuple[str, bool, int]:
         cache_key = self.get_cache_key()
@@ -52,7 +51,7 @@ class AbstractOtpService:
     def verify_otp(self, otp: str) -> bool:
         cache_key = self.get_cache_key()
         cached_otp = cache.get(cache_key)
-        
+
         if cached_otp and str(otp) == str(cached_otp):
             cache.delete(cache_key)
             return True
@@ -73,7 +72,8 @@ class AbstractOtpService:
             'otp': otp,
             'first_name': getattr(self.obj, 'first_name', ''),
         })
-        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@saferoute.com')
+        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL',
+                             'noreply@saferoute.com')
         send_mail(
             subject,
             '',
