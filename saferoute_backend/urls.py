@@ -19,6 +19,7 @@ from django.urls import path, include
 from saferoute_backend.admin import saferoute_admin_site
 
 urlpatterns = [
+    path('i18n/', include('django.conf.urls.i18n')),
     path('admin/', saferoute_admin_site.urls),
     path('', include('users.apis.driver.v1.urls')),
     path('', include('users.apis.gaurdian.v1.urls')),

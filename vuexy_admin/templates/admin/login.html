@@ -1,0 +1,242 @@
+{% load i18n static %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<!DOCTYPE html>
+<html
+  lang="{{ LANGUAGE_CODE|default:'en-us' }}"
+  dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr' }}"
+  class="light-style"
+  data-theme="light"
+  data-assets-path="{% static '/' %}"
+  data-framework="django"
+  data-template="vertical-menu-template-free"
+>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+  <meta name="robots" content="NONE,NOARCHIVE" />
+  <title>{% if form.errors %}{% trans "Error:" %} {% endif %}{% trans "Log in" %} | {% trans "Django Administration" %}</title>
+
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/favicon/favicon.ico' %}" />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
+
+  <!-- Vuexy Icon Fonts -->
+  <link rel="stylesheet" href="{% static 'vendor/fonts/tabler-icons.css' %}" />
+
+  <!-- Vuexy Core CSS (RTL-aware) -->
+  {% if LANGUAGE_BIDI %}
+  <link rel="stylesheet" href="{% static 'vendor/css/rtl/core.css' %}" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="{% static 'vendor/css/rtl/theme-default.css' %}" class="template-customizer-theme-css" />
+  {% else %}
+  <link rel="stylesheet" href="{% static 'vendor/css/core.css' %}" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="{% static 'vendor/css/theme-default.css' %}" class="template-customizer-theme-css" />
+  {% endif %}
+
+  <link rel="stylesheet" href="{% static 'css/demo.css' %}" />
+  <link rel="stylesheet" href="{% static 'vendor/css/pages/page-auth.css' %}" />
+
+  <!-- Vuexy head scripts -->
+  <script src="{% static 'vendor/js/helpers.js' %}"></script>
+  <script src="{% static 'js/config.js' %}"></script>
+</head>
+
+<body>
+
+<div class="authentication-wrapper authentication-cover">
+  <!-- Logo -->
+  <a href="{% url 'admin:index' %}" class="app-brand auth-cover-brand">
+    <span class="app-brand-logo demo">
+      <svg width="25" viewBox="0 0 25 42" version="1.1" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+          <rect fill="#696cff" x="0" y="0" width="12" height="42"></rect>
+          <rect fill="#696cff" opacity="0.5" x="13" y="0" width="12" height="42"></rect>
+        </g>
+      </svg>
+    </span>
+    <span class="app-brand-text demo text-heading fw-bold ms-1">{% trans "SafeRoute" %}</span>
+  </a>
+  <!-- /Logo -->
+
+  <div class="authentication-inner row m-0">
+
+    <!-- Left illustration panel -->
+    <div class="d-none d-lg-flex col-lg-8 p-0">
+      <div class="auth-cover-bg auth-cover-bg-color d-flex justify-content-center align-items-center">
+        <img
+          src="{% static 'img/illustrations/auth-login-illustration-light.png' %}"
+          alt="Login illustration"
+          class="my-5 auth-illustration"
+          data-app-light-img="illustrations/auth-login-illustration-light.png"
+          data-app-dark-img="illustrations/auth-login-illustration-dark.png"
+        />
+        <img
+          src="{% static 'img/illustrations/bg-shape-image-light.png' %}"
+          alt=""
+          class="platform-bg"
+          data-app-light-img="illustrations/bg-shape-image-light.png"
+          data-app-dark-img="illustrations/bg-shape-image-dark.png"
+        />
+      </div>
+    </div>
+    <!-- /Left panel -->
+
+    <!-- Login form panel -->
+    <div class="d-flex col-12 col-lg-4 align-items-center authentication-bg p-sm-12 p-6">
+      <div class="w-px-400 mx-auto mt-12 pt-5">
+
+        <h4 class="mb-1">{% trans "Welcome to SafeRoute!" %} 👋</h4>
+        <p class="mb-6 text-muted">{% trans "Sign in to your admin account" %}</p>
+
+        {# Non-field errors / already-logged-in notice #}
+        {% if user.is_authenticated %}
+        <div class="alert alert-warning mb-4">
+          <i class="ti ti-alert-triangle me-2"></i>
+          {% blocktranslate trimmed %}
+            You are authenticated as {{ username }}, but are not authorized to
+            access this page. Would you like to login to a different account?
+          {% endblocktranslate %}
+        </div>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger mb-4">
+          <i class="ti ti-circle-x me-2"></i>
+          {% for error in form.non_field_errors %}{{ error }}{% endfor %}
+        </div>
+        {% endif %}
+
+        {% if form.errors and not form.non_field_errors %}
+        <div class="alert alert-danger mb-4">
+          <i class="ti ti-circle-x me-2"></i>
+          {% blocktranslate count counter=form.errors.items|length %}
+            Please correct the error below.
+          {% plural %}
+            Please correct the errors below.
+          {% endblocktranslate %}
+        </div>
+        {% endif %}
+
+        <form action="{{ app_path }}" method="post" id="login-form" class="mb-6">
+          {% csrf_token %}
+
+          {# Username field #}
+          <div class="mb-4">
+            <label for="{{ form.username.id_for_label }}" class="form-label">
+              {% trans "Username" %}
+            </label>
+            {% if form.username.errors %}
+            <div class="text-danger small mb-1">
+              {% for error in form.username.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+            <input
+              type="text"
+              class="form-control{% if form.username.errors %} is-invalid{% endif %}"
+              id="{{ form.username.id_for_label }}"
+              name="{{ form.username.html_name }}"
+              value="{{ form.username.value|default:'' }}"
+              placeholder="{% trans 'Enter your username' %}"
+              autofocus
+              autocomplete="username"
+            />
+          </div>
+
+          {# Password field #}
+          <div class="mb-4 form-password-toggle">
+            <label for="{{ form.password.id_for_label }}" class="form-label">
+              {% trans "Password" %}
+            </label>
+            {% if form.password.errors %}
+            <div class="text-danger small mb-1">
+              {% for error in form.password.errors %}{{ error }}{% endfor %}
+            </div>
+            {% endif %}
+            <div class="input-group input-group-merge">
+              <input
+                type="password"
+                class="form-control{% if form.password.errors %} is-invalid{% endif %}"
+                id="{{ form.password.id_for_label }}"
+                name="{{ form.password.html_name }}"
+                placeholder="&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;&#xb7;"
+                aria-describedby="password"
+                autocomplete="current-password"
+              />
+              <span class="input-group-text cursor-pointer">
+                <i class="ti ti-eye-off"></i>
+              </span>
+            </div>
+          </div>
+
+          {# Remember me + forgot password row #}
+          <div class="my-6">
+            <div class="d-flex justify-content-between flex-wrap gap-2">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="remember-me" name="remember_me" />
+                <label class="form-check-label" for="remember-me">{% trans "Remember Me" %}</label>
+              </div>
+              {% url 'admin_password_reset' as password_reset_url %}
+              {% if password_reset_url %}
+              <a href="{{ password_reset_url }}" class="small">{% trans "Forgot Password?" %}</a>
+              {% endif %}
+            </div>
+          </div>
+
+          <input type="hidden" name="next" value="{{ next }}" />
+          <button class="btn btn-primary d-grid w-100" type="submit">
+            {% trans "Sign in" %}
+          </button>
+        </form>
+
+        {# Dark/Light mode toggle on login page #}
+        <div class="text-center mt-4">
+          <span class="text-muted small">{% trans "Theme" %}:</span>
+          <a href="javascript:void(0);" data-theme="light" class="text-muted small ms-2">
+            <i class="ti ti-sun ti-xs"></i>
+          </a>
+          <a href="javascript:void(0);" data-theme="dark" class="text-muted small ms-2">
+            <i class="ti ti-moon ti-xs"></i>
+          </a>
+          <a href="javascript:void(0);" data-theme="system" class="text-muted small ms-2">
+            <i class="ti ti-device-desktop ti-xs"></i>
+          </a>
+        </div>
+
+      </div>
+    </div>
+    <!-- /Login form panel -->
+
+  </div>
+</div>
+
+<!-- Vuexy JS -->
+<script src="{% static 'vendor/libs/jquery/jquery.js' %}"></script>
+<script src="{% static 'vendor/libs/popper/popper.js' %}"></script>
+<script src="{% static 'vendor/js/bootstrap.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+
+<!-- Password visibility toggle -->
+<script>
+(function() {
+  'use strict';
+  document.querySelectorAll('.form-password-toggle .input-group-text').forEach(function(toggle) {
+    toggle.addEventListener('click', function() {
+      var input = this.closest('.input-group').querySelector('input');
+      var icon  = this.querySelector('i');
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('ti-eye-off', 'ti-eye');
+      } else {
+        input.type = 'password';
+        icon.classList.replace('ti-eye', 'ti-eye-off');
+      }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

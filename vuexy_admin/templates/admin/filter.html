@@ -1,0 +1,13 @@
+{% load i18n %}
+<div class="col-sm-6 col-lg-auto flex-grow-1 filter-select-group d-flex flex-column">
+  <label class="form-label small fw-semibold text-muted mb-1 text-uppercase" style="font-size:0.7rem;letter-spacing:.05em">{{ title }}</label>
+  <select class="form-select text-capitalize filter-select"
+          aria-label="{% blocktranslate with filter_title=title %}Filter by {{ filter_title }}{% endblocktranslate %}"
+          onchange="if(this.value) window.location=this.value;">
+    {% for choice in choices %}
+    <option value="{{ choice.query_string|iriencode }}"{% if choice.selected %} selected{% endif %}>
+      {{ choice.display }}
+    </option>
+    {% endfor %}
+  </select>
+</div>

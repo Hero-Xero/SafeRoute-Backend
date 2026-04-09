@@ -1,0 +1,128 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static log %}
+
+{% block title %}{% trans "Site administration" %}{% endblock %}
+{% block nav-breadcrumbs %}{% endblock %}
+{% block nav-sidebar %}{% endblock %}
+{% block coltype %}colM{% endblock %}
+
+{% block content_title %}
+<h1 class="mb-0">{% trans "Dashboard" %}</h1>
+{% endblock %}
+
+{% block content %}
+<div class="row g-4 mt-0">
+
+  {# ── Project-defined dashboard widgets ─────────────────────────────────────
+     Override this block in your project's templates/admin/index.html to inject
+     KPI cards, sparklines, charts, or any other custom content.
+     All widget templates ship with this package under admin/widgets/.
+  #}
+  {% block dashboard %}{% endblock %}
+
+  {# ── App model cards ───────────────────────────────────────────────────── #}
+  {% for app in app_list %}
+  <div class="col-12 col-md-6 col-xl-4">
+    <div class="card h-100">
+      <div class="card-header d-flex align-items-center">
+        <div class="avatar avatar-sm me-3 flex-shrink-0">
+          <span class="avatar-initial rounded-circle bg-label-primary">
+            <i class="ti ti-layout-grid ti-sm"></i>
+          </span>
+        </div>
+        <h5 class="card-title mb-0">
+          <a href="{{ app.app_url }}" class="text-heading text-decoration-none">{{ app.name }}</a>
+        </h5>
+      </div>
+      <div class="card-body p-0">
+        <ul class="list-group list-group-flush">
+          {% for model in app.models %}
+          <li class="list-group-item d-flex align-items-center justify-content-between px-4 py-3">
+            <span class="text-body">
+              {% if model.admin_url %}
+              <a href="{{ model.admin_url }}" class="text-body text-decoration-none fw-medium">{{ model.name }}</a>
+              {% else %}
+              <span class="fw-medium">{{ model.name }}</span>
+              {% endif %}
+            </span>
+            <div class="d-flex gap-2">
+              {% if model.add_url %}
+              <a href="{{ model.add_url }}" class="btn btn-icon btn-sm btn-outline-primary rounded-pill" title="{% trans 'Add' %}">
+                <i class="ti ti-plus ti-xs"></i>
+              </a>
+              {% endif %}
+              {% if model.admin_url %}
+              <a href="{{ model.admin_url }}" class="btn btn-icon btn-sm btn-outline-secondary rounded-pill" title="{% trans 'Change' %}">
+                <i class="ti ti-list ti-xs"></i>
+              </a>
+              {% endif %}
+            </div>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12">
+    <div class="alert alert-info">
+      <i class="ti ti-info-circle me-2"></i>
+      {% trans "You don't have permission to view or edit anything." %}
+    </div>
+  </div>
+  {% endfor %}
+
+  {# ── Recent actions ────────────────────────────────────────────────────── #}
+  <div class="col-12">
+    <div class="card">
+      <div class="card-header d-flex align-items-center justify-content-between">
+        <h5 class="card-title mb-0">
+          <i class="ti ti-history me-2 text-primary"></i>{% trans "Recent Actions" %}
+        </h5>
+        <span class="badge bg-label-secondary">{% trans "My actions" %}</span>
+      </div>
+      <div class="card-body p-0">
+        {% get_admin_log 10 as admin_log for_user user %}
+        {% if not admin_log %}
+        <div class="p-4 text-muted small text-center">
+          <i class="ti ti-clock-off ti-lg d-block mb-2"></i>
+          {% trans "None available" %}
+        </div>
+        {% else %}
+        <ul class="list-group list-group-flush" id="recent-actions-list">
+          {% for entry in admin_log %}
+          <li class="list-group-item px-4 py-3 d-flex align-items-center gap-3">
+            <div class="avatar avatar-xs flex-shrink-0">
+              {% if entry.is_addition %}
+              <span class="avatar-initial rounded-circle bg-label-success"><i class="ti ti-plus ti-xs"></i></span>
+              {% elif entry.is_change %}
+              <span class="avatar-initial rounded-circle bg-label-warning"><i class="ti ti-pencil ti-xs"></i></span>
+              {% elif entry.is_deletion %}
+              <span class="avatar-initial rounded-circle bg-label-danger"><i class="ti ti-trash ti-xs"></i></span>
+              {% endif %}
+            </div>
+            <div class="flex-grow-1 min-w-0">
+              <div class="fw-medium text-truncate">
+                {% if entry.is_deletion or not entry.get_admin_url %}
+                  {{ entry.object_repr }}
+                {% else %}
+                  <a href="{{ entry.get_admin_url }}" class="text-body">{{ entry.object_repr }}</a>
+                {% endif %}
+              </div>
+              <small class="text-muted">
+                {% if entry.content_type %}{{ entry.content_type.name|capfirst }}{% else %}{% trans "Unknown content" %}{% endif %}
+              </small>
+            </div>
+            <span class="badge bg-label-{% if entry.is_addition %}success{% elif entry.is_change %}warning{% else %}danger{% endif %} flex-shrink-0">
+              {% if entry.is_addition %}{% trans "Added" %}{% elif entry.is_change %}{% trans "Changed" %}{% else %}{% trans "Deleted" %}{% endif %}
+            </span>
+          </li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

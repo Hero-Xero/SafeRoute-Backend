@@ -1,0 +1,116 @@
+{% load i18n %}
+<!--
+  _chart_card.html — full ApexCharts chart in a card with header.
+  Requires ApexCharts (_apex_scripts.html) loaded once on the page.
+  Variables: chart_id, chart_config (JSON string), title, subtitle,
+             height, extra_value, extra_badge, extra_badge_color,
+             menu_id, menu_items (list of dicts with label/url)
+-->
+<div class="card h-100">
+  <div class="card-header d-flex justify-content-between align-items-start pb-0">
+
+    <!-- Header left: title + optional big value/badge -->
+    <div>
+      {% if title %}
+        <h5 class="mb-1 card-title">{{ title }}</h5>
+      {% endif %}
+      {% if subtitle %}
+        <p class="card-subtitle mb-0">{{ subtitle }}</p>
+      {% endif %}
+      {% if extra_value %}
+        <div class="d-flex align-items-center gap-2 mt-2">
+          <h3 class="mb-0">{{ extra_value }}</h3>
+          {% if extra_badge %}
+            <span class="badge bg-label-{{ extra_badge_color|default:'success' }}">{{ extra_badge }}</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Header right: optional dropdown -->
+    {% if menu_items %}
+      <div class="dropdown">
+        <button
+          class="btn btn-text-secondary rounded-pill border-0 p-2 me-n1"
+          type="button"
+          id="{{ menu_id|default:chart_id }}-menu"
+          data-bs-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="false"
+        >
+          <i class="ti ti-dots-vertical ti-md text-muted"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="{{ menu_id|default:chart_id }}-menu">
+          {% for item in menu_items %}
+            <li>
+              <a class="dropdown-item" href="{{ item.url|default:'#' }}">{{ item.label }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+  </div><!-- /card-header -->
+
+  <div class="card-body">
+    <div id="{{ chart_id }}"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var el = document.getElementById('{{ chart_id }}');
+  if (!el || typeof ApexCharts === 'undefined') return;
+
+  var isDark       = document.documentElement.classList.contains('dark-style');
+  var cfg          = window.config || {};
+  var labelColor   = isDark ? (cfg.colors_dark && cfg.colors_dark.textMuted   || '#8285a0') : (cfg.colors && cfg.colors.textMuted   || '#acaab1');
+  var borderColor  = isDark ? (cfg.colors_dark && cfg.colors_dark.borderColor || '#565b79') : (cfg.colors && cfg.colors.borderColor || '#e6e6e8');
+
+  /* Base defaults — merged with caller's config so callers don't need to
+     repeat boilerplate dark-mode options on every chart. */
+  var defaults = {
+    chart: {
+      height:  {{ height|default:250 }},
+      toolbar: { show: false }
+    },
+    grid: {
+      borderColor:    borderColor,
+      strokeDashArray: 3,
+      padding:        { top: -20, bottom: -8, left: 0, right: 0 }
+    },
+    xaxis: {
+      labels:     { style: { colors: labelColor, fontSize: '13px' } },
+      axisBorder: { show: false },
+      axisTicks:  { show: false }
+    },
+    yaxis: {
+      labels: { style: { colors: labelColor, fontSize: '13px' } }
+    },
+    legend: {
+      labels:         { colors: labelColor },
+      itemMargin:     { horizontal: 10 }
+    },
+    tooltip: { theme: isDark ? 'dark' : 'light' }
+  };
+
+  /* Deep-merge helper: values in userConfig take precedence */
+  function merge(target, source) {
+    Object.keys(source).forEach(function (key) {
+      if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+        target[key] = target[key] || {};
+        merge(target[key], source[key]);
+      } else {
+        target[key] = source[key];
+      }
+    });
+    return target;
+  }
+
+  var userConfig = {{ chart_config|safe }};
+  var options    = merge(defaults, userConfig);
+
+  new ApexCharts(el, options).render();
+})();
+</script>

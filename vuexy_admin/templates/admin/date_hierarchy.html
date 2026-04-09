@@ -1,0 +1,26 @@
+{% load i18n %}
+{% if show %}
+<div class="d-flex align-items-center gap-2 flex-wrap px-3 py-2 border-bottom date-hierarchy-nav" aria-labelledby="date-hierarchy-label">
+  <span id="date-hierarchy-label" class="text-muted small fw-semibold">
+    <i class="ti ti-calendar-filter me-1"></i>{% blocktranslate %}{{ field_name }}{% endblocktranslate %}:
+  </span>
+  {% block date-hierarchy-toplinks %}
+  {% block date-hierarchy-back %}
+  {% if back %}
+  <a href="{{ back.link }}" class="btn btn-sm btn-label-secondary py-1">
+    <i class="ti ti-arrow-left ti-xs me-1"></i>{{ back.title }}
+  </a>
+  {% endif %}
+  {% endblock %}
+  {% block date-hierarchy-choices %}
+  {% for choice in choices %}
+    {% if choice.link %}
+    <a href="{{ choice.link }}" class="btn btn-sm btn-outline-secondary rounded-pill">{{ choice.title }}</a>
+    {% else %}
+    <span class="btn btn-sm btn-primary rounded-pill pe-none">{{ choice.title }}</span>
+    {% endif %}
+  {% endfor %}
+  {% endblock %}
+  {% endblock %}
+</div>
+{% endif %}

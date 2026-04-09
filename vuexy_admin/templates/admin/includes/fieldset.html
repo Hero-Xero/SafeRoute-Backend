@@ -1,0 +1,63 @@
+<fieldset class="vuexy-fieldset module aligned {{ fieldset.classes }}"{% if fieldset.name %} aria-labelledby="{{ prefix }}-{{ id_prefix }}-{{ id_suffix }}-heading"{% endif %}>
+  {% if fieldset.name %}
+  <div class="vuexy-fieldset-header d-flex align-items-center justify-content-between">
+    <h{{ heading_level|default:2 }} id="{{ prefix }}-{{ id_prefix }}-{{ id_suffix }}-heading" class="vuexy-fieldset-title mb-0">
+      {{ fieldset.name }}
+    </h{{ heading_level|default:2 }}>
+    {% if fieldset.is_collapsible %}
+    <button type="button" class="btn btn-icon btn-sm btn-label-secondary collapse-toggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#fieldset-body-{{ prefix }}-{{ id_prefix }}-{{ id_suffix }}">
+      <i class="ti ti-chevron-up"></i>
+    </button>
+    {% endif %}
+  </div>
+  {% endif %}
+  {% if fieldset.description %}
+  <div class="vuexy-fieldset-description small text-muted px-4 py-2">{{ fieldset.description|safe }}</div>
+  {% endif %}
+  <div class="vuexy-fieldset-body{% if fieldset.is_collapsible %} collapse show{% endif %}"
+       id="fieldset-body-{{ prefix }}-{{ id_prefix }}-{{ id_suffix }}">
+    <div class="row g-4 p-4">
+      {% for line in fieldset %}
+      {% for field in line %}
+        {% if field.is_fieldset %}
+        <fieldset class="col-12{% if not line.fields|length == 1 %} col-sm-6{% endif %}{% if not line.has_visible_field %} d-none{% endif %}{% if field.field.is_hidden %} d-none{% endif %}"
+                  {% if field.field.help_text %}aria-describedby="{{ field.field.id_for_label }}_helptext"{% endif %}>
+          {{ field.label_tag }}
+          {% if field.field.help_text %}
+          <div class="text-muted small mb-1" id="{{ field.field.id_for_label }}_helptext">{{ field.field.help_text|safe }}</div>
+          {% endif %}
+          {% if line.fields|length == 1 %}{{ line.errors }}{% endif %}
+          {% if not line.fields|length == 1 and not field.is_readonly %}{{ field.errors }}{% endif %}
+        </fieldset>
+        {% else %}
+        <div class="vuexy-form-field col-12{% if not line.fields|length == 1 %} col-sm-6{% endif %}{% if not line.has_visible_field %} d-none{% endif %}{% if field.field.is_hidden %} d-none{% endif %}{% if field.field.name %} field-{{ field.field.name }}{% endif %}{% if field.is_checkbox %} vuexy-checkbox-field{% endif %}">
+          {% if field.is_checkbox %}
+            <div class="form-check form-switch mt-2">
+              {{ field.field }}
+              <label class="form-check-label" for="{{ field.field.id_for_label }}">{{ field.field.label }}</label>
+            </div>
+            {% if field.field.help_text %}
+            <div class="text-muted small mt-1"{% if field.field.id_for_label %} id="{{ field.field.id_for_label }}_helptext"{% endif %}>{{ field.field.help_text|safe }}</div>
+            {% endif %}
+          {% else %}
+            {{ field.label_tag }}
+            {% if field.field.help_text %}
+            <div class="text-muted small mb-1"{% if field.field.id_for_label %} id="{{ field.field.id_for_label }}_helptext"{% endif %}>{{ field.field.help_text|safe }}</div>
+            {% endif %}
+            {% if line.fields|length == 1 %}{{ line.errors }}{% endif %}
+            {% if not line.fields|length == 1 and not field.is_readonly %}{{ field.errors }}{% endif %}
+            {% if field.is_readonly %}
+            <div class="form-control-plaintext readonly-field">{{ field.contents }}</div>
+            {% else %}
+            {{ field.field }}
+            {% endif %}
+          {% endif %}
+        </div>
+        {% endif %}
+      {% endfor %}
+      {% endfor %}
+    </div>
+  </div>
+</fieldset>

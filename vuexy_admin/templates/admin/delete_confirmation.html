@@ -1,0 +1,91 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    {{ media }}
+    <script src="{% static 'admin/js/cancel.js' %}" async></script>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} delete-confirmation{% endblock %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+<li><a href="{% url 'admin:index' %}">{% translate 'Home' %}</a></li>
+<li><a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a></li>
+<li><a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a></li>
+<li><a href="{% url opts|admin_urlname:'change' object.pk|admin_urlquote %}">{{ object|truncatewords:"18" }}</a></li>
+<li aria-current="page">{% translate 'Delete' %}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-8">
+
+    {% if perms_lacking %}
+      {% block delete_forbidden %}
+      <div class="card border-warning">
+        <div class="card-header bg-label-warning d-flex align-items-center">
+          <i class="ti ti-shield-x me-2"></i>
+          <h5 class="card-title mb-0">{% translate 'Permission denied' %}</h5>
+        </div>
+        <div class="card-body">
+          <p>{% blocktranslate %}Deleting the {{ object_name }} "{{ escaped_object }}" would result in deleting related objects, but your account doesn't have permission to delete the following types of objects:{% endblocktranslate %}</p>
+          <ul id="deleted-objects" class="list-unstyled ps-3">{{ perms_lacking|unordered_list }}</ul>
+        </div>
+      </div>
+      {% endblock %}
+
+    {% elif protected %}
+      {% block delete_protected %}
+      <div class="card border-warning">
+        <div class="card-header bg-label-warning d-flex align-items-center">
+          <i class="ti ti-lock me-2"></i>
+          <h5 class="card-title mb-0">{% translate 'Protected object' %}</h5>
+        </div>
+        <div class="card-body">
+          <p>{% blocktranslate %}Deleting the {{ object_name }} "{{ escaped_object }}" would require deleting the following protected related objects:{% endblocktranslate %}</p>
+          <ul id="deleted-objects" class="list-unstyled ps-3">{{ protected|unordered_list }}</ul>
+        </div>
+      </div>
+      {% endblock %}
+
+    {% else %}
+      {% block delete_confirm %}
+      <div class="card border-danger">
+        <div class="card-header bg-label-danger d-flex align-items-center">
+          <i class="ti ti-trash me-2 text-danger"></i>
+          <h5 class="card-title mb-0 text-danger">{% translate 'Confirm deletion' %}</h5>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-danger d-flex align-items-start" role="alert">
+            <i class="ti ti-alert-triangle me-2 mt-1 flex-shrink-0"></i>
+            <div>
+              {% blocktranslate %}Are you sure you want to delete the {{ object_name }} "{{ escaped_object }}"? All of the following related items will be deleted:{% endblocktranslate %}
+            </div>
+          </div>
+          {% include "admin/includes/object_delete_summary.html" %}
+          <h6 class="fw-semibold mt-3 mb-2">{% translate "Objects" %}</h6>
+          <ul id="deleted-objects" class="list-unstyled ps-3 text-muted small">{{ deleted_objects|unordered_list }}</ul>
+        </div>
+        <div class="card-footer d-flex align-items-center gap-2">
+          <form method="post">{% csrf_token %}
+            <input type="hidden" name="post" value="yes">
+            {% if is_popup %}<input type="hidden" name="{{ is_popup_var }}" value="1">{% endif %}
+            {% if to_field %}<input type="hidden" name="{{ to_field_var }}" value="{{ to_field }}">{% endif %}
+            <button type="submit" class="btn btn-danger waves-effect waves-light">
+              <i class="ti ti-trash me-2"></i>{% translate 'Yes, delete' %}
+            </button>
+          </form>
+          <a role="button" href="#" class="btn btn-label-secondary cancel-link">
+            <i class="ti ti-arrow-back me-2"></i>{% translate "No, take me back" %}
+          </a>
+        </div>
+      </div>
+      {% endblock %}
+    {% endif %}
+
+  </div>
+</div>
+{% endblock content %}

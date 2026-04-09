@@ -1,0 +1,108 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls %}
+
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+<li><a href="{% url 'admin:index' %}">{% translate 'Home' %}</a></li>
+<li><a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a></li>
+<li><a href="{% url opts|admin_urlname:'changelist' %}">{{ module_name }}</a></li>
+<li><a href="{% url opts|admin_urlname:'change' object.pk|admin_urlquote %}">{{ object|truncatewords:"18" }}</a></li>
+<li aria-current="page">{% translate 'History' %}</li>
+</ol>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-12 col-lg-10">
+    <div class="card" id="change-history">
+      <div class="card-header d-flex align-items-center">
+        <i class="ti ti-history me-2 text-primary"></i>
+        <h5 class="card-title mb-0">{% translate 'Change history' %}: {{ object|truncatewords:"18" }}</h5>
+      </div>
+      <div class="card-body p-0">
+        {% if action_list %}
+        <div class="table-responsive">
+          <table class="table table-hover border-top mb-0">
+            <thead>
+              <tr>
+                <th scope="col" class="text-nowrap">{% translate 'Date/time' %}</th>
+                <th scope="col">{% translate 'User' %}</th>
+                <th scope="col">{% translate 'Action' %}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for action in action_list %}
+              <tr>
+                <th scope="row" class="text-nowrap small text-muted fw-normal">
+                  {{ action.action_time|date:"DATETIME_FORMAT" }}
+                </th>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <div class="avatar avatar-xs">
+                      <span class="avatar-initial rounded-circle bg-label-primary">
+                        {{ action.user.get_username|first|upper }}
+                      </span>
+                    </div>
+                    <div>
+                      <span class="fw-medium">{{ action.user.get_username }}</span>
+                      {% if action.user.get_full_name %}
+                      <small class="text-muted d-block">{{ action.user.get_full_name }}</small>
+                      {% endif %}
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge rounded-pill
+                    {% if 'Added' in action.get_change_message %}bg-label-success
+                    {% elif 'Deleted' in action.get_change_message %}bg-label-danger
+                    {% else %}bg-label-warning{% endif %}
+                    me-2">
+                    {% if 'Added' in action.get_change_message %}
+                    <i class="ti ti-plus ti-xs"></i>
+                    {% elif 'Deleted' in action.get_change_message %}
+                    <i class="ti ti-trash ti-xs"></i>
+                    {% else %}
+                    <i class="ti ti-pencil ti-xs"></i>
+                    {% endif %}
+                  </span>
+                  {{ action.get_change_message }}
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% if pagination_required %}
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 p-3 border-top">
+          <div class="text-muted small">
+            {{ action_list.paginator.count }}
+            {% blocktranslate count counter=action_list.paginator.count %}entry{% plural %}entries{% endblocktranslate %}
+          </div>
+          <nav>
+            <ul class="pagination pagination-sm mb-0">
+              {% for i in page_range %}
+              <li class="page-item{% if i == action_list.number %} active{% endif %}">
+                {% if i == action_list.paginator.ELLIPSIS %}
+                <span class="page-link">…</span>
+                {% elif i == action_list.number %}
+                <span class="page-link">{{ i }}</span>
+                {% else %}
+                <a class="page-link" href="?{{ page_var }}={{ i }}">{{ i }}</a>
+                {% endif %}
+              </li>
+              {% endfor %}
+            </ul>
+          </nav>
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="p-4 text-center text-muted">
+          <i class="ti ti-clock-off ti-lg d-block mb-2"></i>
+          {% translate "This object doesn't have a change history. It probably wasn't added via this admin site." %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
