@@ -1,0 +1,544 @@
+/*
+ * vuexy_admin.css  v3
+ * Bridges Django admin generated HTML with the Vuexy Bootstrap 5 design system.
+ * Uses only CSS custom properties — no hardcoded colors → dark mode works automatically.
+ * ─────────────────────────────────────────────────────────────────────────────
+ */
+
+/* ── Pagination ──────────────────────────────────────────────────────────── */
+/*
+ * paginator_number outputs:
+ *   current page  → <li class="page-item"><span class="this-page">N</span></li>
+ *   other pages   → <li class="page-item"><a href="...">N</a></li>
+ *   ellipsis      → <li class="page-item">… (text node)</li>
+ * Neither has Bootstrap's .page-link class, so we apply the styles here.
+ */
+.pagination .page-item > a,
+.pagination .page-item > .this-page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  height: 2rem;
+  padding: 0 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius) !important;
+  text-decoration: none;
+  transition: color .15s, background-color .15s, border-color .15s;
+}
+/* Other page links */
+.pagination .page-item > a {
+  color: var(--bs-primary);
+  background-color: var(--bs-body-bg);
+}
+.pagination .page-item > a:hover {
+  color: var(--bs-primary);
+  background-color: rgba(var(--bs-primary-rgb), .08);
+  border-color: var(--bs-primary);
+}
+/* Active (current) page */
+.pagination .page-item > .this-page {
+  color: #fff;
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+  font-weight: 600;
+  cursor: default;
+}
+/* Ellipsis text node — hide the bare li border */
+.pagination .page-item {
+  display: flex;
+  align-items: center;
+  border: none;
+}
+
+/* ── Base resets ─────────────────────────────────────────────────────────── */
+body { font-family: "Public Sans", sans-serif !important; }
+a { color: var(--bs-primary); }
+* { box-sizing: border-box; }
+
+/* ── Django messages → Vuexy alerts ─────────────────────────────────────── */
+ul.messagelist { list-style: none; padding: 0; margin: 0 0 1.25rem 0; }
+ul.messagelist li {
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  border-radius: var(--bs-border-radius);
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  border: 1px solid transparent;
+  position: relative;
+}
+ul.messagelist li::before {
+  font-family: "tabler-icons";
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.1rem;
+}
+ul.messagelist li.success {
+  background: var(--bs-success-bg-subtle);
+  color: var(--bs-success-text-emphasis);
+  border-color: var(--bs-success-border-subtle);
+}
+ul.messagelist li.success::before { content: "\ec72"; color: var(--bs-success); }
+ul.messagelist li.warning {
+  background: var(--bs-warning-bg-subtle);
+  color: var(--bs-warning-text-emphasis);
+  border-color: var(--bs-warning-border-subtle);
+}
+ul.messagelist li.warning::before { content: "\ea06"; color: var(--bs-warning); }
+ul.messagelist li.error {
+  background: var(--bs-danger-bg-subtle);
+  color: var(--bs-danger-text-emphasis);
+  border-color: var(--bs-danger-border-subtle);
+}
+ul.messagelist li.error::before { content: "\ea05"; color: var(--bs-danger); }
+ul.messagelist li.info {
+  background: var(--bs-info-bg-subtle);
+  color: var(--bs-info-text-emphasis);
+  border-color: var(--bs-info-border-subtle);
+}
+ul.messagelist li.info::before { content: "\ea77"; color: var(--bs-info); }
+
+/* ── Breadcrumbs ─────────────────────────────────────────────────────────── */
+/*
+ * Django admin renders breadcrumbs as <ol class="breadcrumbs">.
+ * Style them to match Bootstrap's .breadcrumb appearance.
+ */
+ol.breadcrumbs {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  margin: 0 0 1rem 0;
+  list-style: none;
+  font-size: 0.875rem;
+}
+ol.breadcrumbs li {
+  display: flex;
+  align-items: center;
+  color: var(--bs-secondary-color);
+}
+ol.breadcrumbs li + li::before {
+  content: "/";
+  padding: 0 0.5rem;
+  color: var(--bs-border-color);
+}
+ol.breadcrumbs a {
+  color: var(--bs-primary);
+  text-decoration: none;
+}
+ol.breadcrumbs a:hover { text-decoration: underline; }
+ol.breadcrumbs li[aria-current="page"] { color: var(--bs-body-color); }
+
+/* ── object-tools UL ─────────────────────────────────────────────────────── */
+/*
+ * On change_list pages our card header already renders all the same buttons
+ * (Add, Import, Export) via {% block object-tools-items %}.
+ * The package re-renders them again inside a <ul class="object-tools"> above
+ * the card — hide that UL to avoid duplication.
+ * On other admin pages (change_form, etc.) object-tools is not used.
+ */
+body.change-list ul.object-tools { display: none !important; }
+
+/* ── Changelist filter selects ───────────────────────────────────────────── */
+#changelist-filter .filter-select {
+  min-width: 160px;
+  font-size: 0.875rem;
+}
+#changelist-filter .filter-select:focus {
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.15rem rgba(var(--bs-primary-rgb), .2);
+}
+#changelist-filter .filter-select option[selected] {
+  font-weight: 600;
+  color: var(--bs-primary);
+}
+
+/* ── Actions bar ─────────────────────────────────────────────────────────── */
+#changelist-actions-bar select {
+  min-width: 180px;
+  padding: 0.3rem 2rem 0.3rem 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23a5a3ae' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 12px 9px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* ── Date hierarchy ──────────────────────────────────────────────────────── */
+.date-hierarchy-nav { background: var(--bs-tertiary-bg); }
+.date-hierarchy-nav .btn-outline-secondary:hover,
+.date-hierarchy-nav .btn-outline-secondary.active { color: var(--bs-primary); border-color: var(--bs-primary); }
+
+/* ── Vuexy fieldset → card appearance ───────────────────────────────────── */
+fieldset.vuexy-fieldset {
+  border: none !important;
+  background: var(--bs-card-bg, var(--bs-body-bg));
+  border-radius: var(--bs-border-radius-lg);
+  box-shadow: var(--bs-card-box-shadow, 0 2px 6px rgba(0,0,0,.06));
+  margin-bottom: 1.5rem;
+  padding: 0;
+  overflow: hidden;
+}
+.dark-style fieldset.vuexy-fieldset { box-shadow: 0 2px 6px rgba(0,0,0,.25); }
+
+.vuexy-fieldset-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--bs-border-color);
+  background: var(--bs-card-cap-bg, transparent);
+}
+.vuexy-fieldset-title {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--bs-heading-color);
+  margin: 0;
+}
+.vuexy-fieldset-description {
+  border-bottom: 1px solid var(--bs-border-color-translucent);
+}
+.vuexy-fieldset-body { padding: 0; }
+
+/* ── Form fields inside fieldset ─────────────────────────────────────────── */
+.vuexy-form-field { display: flex; flex-direction: column; }
+
+/* Label from Django's label_tag() */
+.vuexy-form-field label,
+.vuexy-fieldset label.required,
+.vuexy-fieldset label {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--bs-heading-color);
+  margin-bottom: 0.375rem;
+}
+.vuexy-form-field label.required::after { content: " *"; color: var(--bs-danger); }
+
+/* Form controls — target all widget types */
+.vuexy-form-field input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]),
+.vuexy-form-field select,
+.vuexy-form-field textarea {
+  display: block;
+  width: 100%;
+  padding: 0.4375rem 0.875rem;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  line-height: 1.53;
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.vuexy-form-field input:focus,
+.vuexy-form-field select:focus,
+.vuexy-form-field textarea:focus {
+  border-color: var(--bs-primary);
+  outline: 0;
+  box-shadow: 0 0 0 0.15rem rgba(var(--bs-primary-rgb), .2);
+}
+.vuexy-form-field textarea { min-height: 100px; resize: vertical; }
+.vuexy-form-field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23a5a3ae' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 0.875rem center; background-size: 14px 10px; padding-right: 2.25rem; }
+[dir="rtl"] .vuexy-form-field select { background-position: left 0.875rem center; padding-right: 0.875rem; padding-left: 2.25rem; }
+
+/* Checkboxes — target both Bootstrap-classed and Django's bare checkbox widget */
+.vuexy-checkbox-field .form-check-input,
+.vuexy-checkbox-field .form-check input[type="checkbox"] {
+  float: left;
+  margin-left: -1.8em;
+  width: 1em;
+  height: 1em;
+  margin-top: 0.2em;
+  accent-color: var(--bs-primary);
+  cursor: pointer;
+}
+
+[dir="rtl"] .vuexy-checkbox-field .form-check input[type="checkbox"] {
+  float: right;
+  margin-right: -1.8em;
+  margin-left: 0;
+}
+
+.vuexy-checkbox-field .form-check-label { font-size: 0.875rem; color: var(--bs-body-color); margin-left: 0.5rem; cursor: pointer; }
+
+/* Readonly fields */
+.readonly-field {
+  padding: 0.4375rem 0;
+  font-size: 0.9375rem;
+  color: var(--bs-body-color);
+  border-bottom: 1px solid var(--bs-border-color-translucent);
+}
+
+/* Help text */
+.vuexy-form-field .text-muted.small { font-size: 0.8125rem; margin-top: 0.25rem; }
+
+/* Error list */
+.vuexy-form-field ul.errorlist {
+  list-style: none;
+  padding: 0;
+  margin: 0.25rem 0 0;
+}
+.vuexy-form-field ul.errorlist li {
+  color: var(--bs-danger);
+  font-size: 0.8125rem;
+}
+.vuexy-form-field input.errors,
+.vuexy-form-field select.errors,
+.vuexy-form-field textarea.errors { border-color: var(--bs-danger); }
+
+/* errornote at top of form */
+p.errornote {
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  border-radius: var(--bs-border-radius);
+  background: var(--bs-danger-bg-subtle);
+  color: var(--bs-danger-text-emphasis);
+  border: 1px solid var(--bs-danger-border-subtle);
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+p.errornote::before { content: "⚠"; position: absolute; left: 0.875rem; }
+
+/* ── Submit row (sidebar layout) ─────────────────────────────────────────── */
+.submit-row .btn + .btn { margin-top: 0; }
+
+/* Sticky sidebar on large screens */
+@media (min-width: 992px) {
+  .sticky-sidebar {
+    position: sticky;
+    top: calc(var(--header-height, 4rem) + 1rem);
+  }
+}
+
+/* ── Inline formsets ─────────────────────────────────────────────────────── */
+.inline-group .empty-form { border-style: dashed !important; opacity: .6; }
+.inline-group .empty-form:hover { opacity: .8; }
+
+/* Add-row button (Django's JS injects this) */
+.add-row td { padding: 0.75rem 1rem; }
+.add-row a {
+  color: var(--bs-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.add-row a::before { content: "+"; font-size: 1.1rem; line-height: 1; }
+.add-row a:hover { text-decoration: underline; }
+
+/* Tabular inline table */
+.tabular .table { font-size: 0.875rem; }
+.tabular .table thead th {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--bs-heading-color);
+  padding: 0.65rem 0.875rem;
+  background: transparent;
+}
+.tabular .table tbody td { padding: 0.6rem 0.875rem; vertical-align: middle; }
+.tabular .table tbody tr:hover td { background: rgba(var(--bs-primary-rgb), .04); }
+
+/* Stacked inline rows */
+.inline-related.border-dashed { border-style: dashed !important; }
+.inlinechangelink, .inlineviewlink {
+  font-size: 0.75rem;
+  color: var(--bs-primary);
+  text-decoration: none;
+  margin-left: 0.5rem;
+}
+.inlinechangelink:hover, .inlineviewlink:hover { text-decoration: underline; }
+
+/* ── Select2 overrides ───────────────────────────────────────────────────── */
+.select2-container--admin-autocomplete .select2-selection--single,
+.select2-container--default .select2-selection--single {
+  height: calc(1.5em + 0.875rem + 2px) !important;
+  border-color: var(--bs-border-color) !important;
+  background: var(--bs-body-bg) !important;
+  border-radius: var(--bs-border-radius) !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+  color: var(--bs-body-color) !important;
+  line-height: calc(1.5em + 0.875rem) !important;
+  padding-left: 0.875rem !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: calc(1.5em + 0.875rem + 2px) !important;
+  right: 0.5rem !important;
+}
+.select2-container--default .select2-results__option--highlighted[aria-selected] { background: var(--bs-primary) !important; }
+.select2-dropdown {
+  background: var(--bs-body-bg) !important;
+  border-color: var(--bs-border-color) !important;
+  border-radius: var(--bs-border-radius) !important;
+  box-shadow: var(--bs-box-shadow) !important;
+}
+.select2-container--default .select2-search--dropdown .select2-search__field {
+  background: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+  border-color: var(--bs-border-color) !important;
+}
+.select2-results__option { font-size: 0.875rem; }
+
+/* ── Date/time widgets ───────────────────────────────────────────────────── */
+.datetimeshortcuts a { font-size: 0.8125rem; color: var(--bs-primary); text-decoration: none; }
+.datetimeshortcuts a:hover { text-decoration: underline; }
+.calendarbox, .clockbox {
+  background: var(--bs-body-bg) !important;
+  border: 1px solid var(--bs-border-color) !important;
+  border-radius: var(--bs-border-radius-lg) !important;
+  box-shadow: var(--bs-box-shadow-lg) !important;
+  color: var(--bs-body-color) !important;
+  z-index: 9999 !important;
+}
+.calendar caption { background: var(--bs-primary) !important; color: #fff !important; }
+.calendar td a { text-decoration: none; color: var(--bs-body-color); padding: 0.25rem; }
+.calendar td a:hover { background: rgba(var(--bs-primary-rgb), .15) !important; border-radius: 3px; }
+.calendar td.selected a { background: var(--bs-primary) !important; color: #fff !important; border-radius: 3px; }
+.calendar td.today a { font-weight: 700; color: var(--bs-primary) !important; }
+.calendar td.today.selected a { background: var(--bs-primary) !important; color: #fff !important; border-radius: 3px; }
+.clockbox h2 { background: var(--bs-primary) !important; color: #fff !important; }
+.calendar-shortcuts, .timelist { font-size: 0.75rem; }
+
+/* Date range widget */
+.vDateField, .vTimeField { max-width: 150px; }
+
+/* ── Related widget wrappers ─────────────────────────────────────────────── */
+.related-widget-wrapper { display: inline-flex; align-items: center; gap: 0.5rem; width: 100%; }
+.related-widget-wrapper > input,
+.related-widget-wrapper > select { flex: 1; }
+.related-widget-wrapper a { display: inline-flex; align-items: center; justify-content: center; width: fit-content; height: 2rem; border-radius: var(--bs-border-radius); text-decoration: none; transition: background .15s; flex-shrink: 0; }
+.related-widget-wrapper a img { display: none; }
+.related-widget-wrapper a.related-lookup { background: rgba(var(--bs-primary-rgb), .1); color: var(--bs-primary); }
+.related-widget-wrapper a.add-related { background: rgba(var(--bs-success-rgb), .1); color: var(--bs-success); }
+.related-widget-wrapper a.change-related { background: rgba(var(--bs-warning-rgb), .1); color: var(--bs-warning); }
+.related-widget-wrapper a.delete-related { background: rgba(var(--bs-danger-rgb), .1); color: var(--bs-danger); }
+.related-widget-wrapper a.related-lookup::after { content: "\ea6c"; font-family: "tabler-icons"; font-size: 1rem; }
+.related-widget-wrapper a.add-related::after { content: "\ea12"; font-family: "tabler-icons"; font-size: 1rem; }
+.related-widget-wrapper a.change-related::after { content: "\eb04"; font-family: "tabler-icons"; font-size: 1rem; }
+.related-widget-wrapper a.delete-related::after { content: "\ed18"; font-family: "tabler-icons"; font-size: 1rem; }
+.related-widget-wrapper a:hover { opacity: .8; }
+
+/* ── Popup windows ───────────────────────────────────────────────────────── */
+body.popup #content { padding: 1.5rem !important; }
+body.popup .submit-row { margin-top: 1rem; }
+
+/* ── Prepopulated slug fields ────────────────────────────────────────────── */
+.prepopulated_field .prepopulated-text { font-size: 0.8rem; color: var(--bs-secondary-color); }
+
+/* ── Delete confirmation ─────────────────────────────────────────────────── */
+#deleted-objects { font-size: 0.875rem; line-height: 1.8; }
+#deleted-objects li ul { padding-left: 1.5rem; margin: 0; }
+
+/* ── Object history ──────────────────────────────────────────────────────── */
+#change-history .table thead th { font-size: 0.75rem; text-transform: uppercase; letter-spacing: .04em; }
+
+/* ── Utility ─────────────────────────────────────────────────────────────── */
+.clear { clear: both; }
+.hiddenfields { display: none; }
+.visually-hidden, .hidden { display: none !important; }
+.visually-hidden.action-counter, .hidden.action-counter { display: none !important; }
+tr.empty-form { display: none; }
+
+/* ── RTL adjustments ─────────────────────────────────────────────────────── */
+[dir="rtl"] #changelist-filter { margin-left: 0; }
+[dir="rtl"] .object-tools { justify-content: flex-start; }
+[dir="rtl"] #changelist-search .form-control { text-align: right; }
+[dir="rtl"] .vuexy-form-field label { text-align: right; }
+[dir="rtl"] ol.breadcrumbs li + li::before { content: "\\"; }
+[dir="rtl"] .submit-row { flex-direction: row-reverse; }
+[dir="rtl"] .vuexy-fieldset-header { direction: rtl; }
+
+/* ── input[type="submit"] → Vuexy primary button ─────────────────────────── */
+/*
+ * Django sometimes renders raw <input type="submit"> (e.g. password-change,
+ * contrib auth, older custom admin views). Style to match .btn.btn-primary.
+ */
+input[type="submit"]:not(.btn) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4375rem 1.125rem;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.53;
+  font-family: inherit;
+  white-space: nowrap;
+  vertical-align: middle;
+  cursor: pointer;
+  user-select: none;
+  border: 1px solid transparent;
+  border-radius: var(--bs-border-radius);
+  transition: all .15s ease-in-out;
+  -webkit-appearance: none;
+  appearance: none;
+  background-color: var(--bs-primary);
+  color: #fff;
+  border-color: var(--bs-primary);
+  box-shadow: 0 0.125rem 0.25rem rgba(var(--bs-primary-rgb), .4);
+}
+input[type="submit"]:not(.btn):hover {
+  background-color: color-mix(in srgb, var(--bs-primary) 85%, #000 15%);
+  border-color:     color-mix(in srgb, var(--bs-primary) 85%, #000 15%);
+  box-shadow: 0 0.25rem 0.5rem rgba(var(--bs-primary-rgb), .4);
+}
+input[type="submit"]:not(.btn):focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.15rem rgba(var(--bs-primary-rgb), .35);
+}
+input[type="submit"]:not(.btn):active {
+  background-color: color-mix(in srgb, var(--bs-primary) 75%, #000 25%);
+}
+/* Danger variants */
+input[type="submit"].unset-password,
+input[type="submit"].deletelink {
+  background-color: var(--bs-danger);
+  border-color: var(--bs-danger);
+  box-shadow: 0 0.125rem 0.25rem rgba(var(--bs-danger-rgb), .4);
+  color: #fff;
+}
+input[type="submit"].unset-password:hover,
+input[type="submit"].deletelink:hover {
+  background-color: color-mix(in srgb, var(--bs-danger) 85%, #000 15%);
+  border-color:     color-mix(in srgb, var(--bs-danger) 85%, #000 15%);
+}
+
+/* ── a[role="button"] → Vuexy secondary outlined button ─────────────────── */
+a[role="button"]:not(.btn):not(.dropdown-item):not([class*="page-link"]) {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4375rem 1.125rem;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.53;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid var(--bs-border-color);
+  border-radius: var(--bs-border-radius);
+  color: var(--bs-body-color);
+  background-color: transparent;
+  transition: all .15s ease-in-out;
+}
+a[role="button"]:not(.btn):not(.dropdown-item):not([class*="page-link"]):hover {
+  background-color: var(--bs-tertiary-bg);
+  border-color: var(--bs-border-color);
+  color: var(--bs-body-color);
+}
+
+/* ── Clearfix ────────────────────────────────────────────────────────────── */
+.djn-clear::after,
+.module::after { content: ""; display: table; clear: both; }

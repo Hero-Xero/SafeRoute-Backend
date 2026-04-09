@@ -1,0 +1,6 @@
+{% load i18n admin_urls %}
+{% if has_export_permission %}
+<a href="{% url opts|admin_urlname:'export' %}{{ cl.get_query_string }}" class="btn btn-label-secondary waves-effect text-nowrap">
+  <i class="ti ti-download me-1"></i>{% translate "Export" %}
+</a>
+{% endif %}

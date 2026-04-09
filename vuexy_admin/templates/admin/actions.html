@@ -1,0 +1,42 @@
+{% load i18n %}
+<div class="d-flex align-items-center gap-2 flex-wrap px-3 py-2 border-bottom bg-body-tertiary actions" id="changelist-actions-bar">
+  {% block actions %}
+    {% block actions-form %}
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      {% for field in action_form %}
+        {% if field.label %}
+        <div class="d-flex align-items-center gap-2">
+          <label class="mb-0 text-muted small fw-semibold text-nowrap" for="{{ field.auto_id }}">{{ field.label }}</label>
+          {{ field }}
+        </div>
+        {% else %}
+        {{ field }}
+        {% endif %}
+      {% endfor %}
+      {% block actions-submit %}
+      <button type="submit" class="btn btn-sm btn-primary waves-effect waves-light" name="index" value="{{ action_index|default:0 }}">
+        <i class="ti ti-player-play ti-xs me-1"></i>{% translate "Run" %}
+      </button>
+      {% endblock %}
+    </div>
+    {% endblock %}
+    {% block actions-counter %}
+    {% if actions_selection_counter %}
+    <span class="action-counter badge bg-label-secondary ms-1" data-actions-icnt="{{ cl.result_list|length }}">
+      {{ selection_note }}
+    </span>
+    {% if cl.result_count != cl.result_list|length %}
+    <span class="all hidden">{{ selection_note_all }}</span>
+    <span class="question hidden">
+      <a role="button" href="#" class="text-primary fw-semibold small">
+        {% blocktranslate with cl.result_count as total_count %}Select all {{ total_count }} {{ module_name }}{% endblocktranslate %}
+      </a>
+    </span>
+    <span class="clear hidden">
+      <a role="button" href="#" class="text-muted small">{% translate "Clear selection" %}</a>
+    </span>
+    {% endif %}
+    {% endif %}
+    {% endblock %}
+  {% endblock %}
+</div>

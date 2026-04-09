@@ -1,0 +1,552 @@
+{% load i18n static %}
+{% get_current_language as LANGUAGE_CODE %}
+{% get_current_language_bidi as LANGUAGE_BIDI %}
+<!doctype html>
+<html
+  lang="{{ LANGUAGE_CODE|default:'en-us' }}"
+  dir="{{ LANGUAGE_BIDI|yesno:'rtl,ltr' }}"
+  class="light-style layout-navbar-fixed layout-menu-fixed"
+  data-theme="light"
+  data-assets-path="{% static '/' %}"
+  data-framework="django"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <meta name="robots" content="NONE,NOARCHIVE" />
+    <title>
+      {% block title %}{% endblock %} | {% block site_title %}{{ site_title|default:_('Django Administration') }}{% endblock %}
+    </title>
+
+    <!-- Favicon -->
+    <link
+      rel="shortcut icon"
+      type="image/x-icon"
+      href="{% static 'img/favicon/favicon.ico' %}"
+    />
+
+    <!-- Fonts: Public Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Vuexy Icon Fonts -->
+    <link
+      rel="stylesheet"
+      href="{% static 'vendor/fonts/tabler-icons.css' %}"
+    />
+    <link rel="stylesheet" href="{% static 'vendor/fonts/fontawesome.css' %}" />
+
+    <!-- Vuexy Core + Theme CSS
+         This script runs before any stylesheet is fetched.
+         It reads localStorage to determine the saved style (light/dark/system)
+         and uses document.write() to insert ONLY the correct CSS file.
+         The browser never fetches the wrong variant, so there is no flash. -->
+    <script>
+    (function () {
+      var tn = document.documentElement.getAttribute('data-template') || 'vertical-menu-template-free';
+      var saved;
+      try { saved = localStorage.getItem('templateCustomizer-' + tn + '--Style') || ''; } catch(e) { saved = ''; }
+      var actual = saved === 'system'
+        ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : (saved === 'dark' ? 'dark' : 'light');
+      var isDark = actual === 'dark';
+      if (isDark) {
+        document.documentElement.classList.remove('light-style');
+        document.documentElement.classList.add('dark-style');
+      }
+      var isRtl = document.documentElement.getAttribute('dir') === 'rtl';
+      var base  = isRtl ? "{% static 'vendor/css/rtl' %}" : "{% static 'vendor/css' %}";
+      var sfx   = isDark ? '-dark' : '';
+      document.write('<link rel="stylesheet" href="' + base + '/core' + sfx + '.css" class="template-customizer-core-css">');
+      document.write('<link rel="stylesheet" href="' + base + '/theme-default' + sfx + '.css" class="template-customizer-theme-css">');
+    })();
+    </script>
+
+    <!-- Vuexy demo utilities -->
+    <link rel="stylesheet" href="{% static 'css/demo.css' %}" />
+
+    <!-- Vuexy vendor CSS -->
+    <link
+      rel="stylesheet"
+      href="{% static 'vendor/libs/perfect-scrollbar/perfect-scrollbar.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'vendor/libs/node-waves/node-waves.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'vendor/libs/typeahead-js/typeahead.css' %}"
+    />
+
+    <!-- Django admin Select2 -->
+    <link
+      rel="stylesheet"
+      href="{% static 'admin/css/vendor/select2/select2.css' %}"
+    />
+
+    <!-- Vuexy → Django admin bridge CSS -->
+    <link rel="stylesheet" href="{% static 'admin/css/vuexy_admin.css' %}?v={% now 'U' %}" />
+
+    <!-- Popup mode: hide layout chrome, just show content -->
+    <style>
+      body.popup .layout-menu,
+      body.popup #layout-navbar,
+      body.popup .content-footer,
+      body.popup .layout-overlay,
+      body.popup .drag-target,
+      body.popup .menu-inner-shadow {
+        display: none !important;
+      }
+      body.popup .layout-page {
+        margin-inline-start: 0 !important;
+        padding: 0 !important;
+      }
+      body.popup .content-wrapper {
+        min-height: 0 !important;
+      }
+      body.popup .container-fluid {
+        padding: 1.5rem !important;
+      }
+    </style>
+
+    <!-- Per-page CSS injected by individual Django admin views -->
+    {% block extrastyle %}{% endblock %}
+
+    <!-- Extra <head> content from individual admin views -->
+    {% block extrahead %}{% endblock %}
+
+    <!-- Vuexy head scripts -->
+    <script src="{% static 'vendor/js/helpers.js' %}"></script>
+    <script src="{% static 'js/config.js' %}"></script>
+
+    <!-- window.templateCustomizer shim — required by main.js to bind the
+         style-switcher click handlers (it checks window.templateCustomizer).
+         setStyle saves the choice to localStorage then reloads; the dark-mode
+         restore script above (immediately after the <link> tags) applies the
+         correct CSS file on the next load before anything is painted. -->
+    <script>
+    (function () {
+      var tn = document.documentElement.getAttribute('data-template') || 'vertical-menu-template-free';
+      window.templateCustomizer = {
+        settings: { defaultStyle: 'light' },
+        setStyle: function (style) {
+          try { localStorage.setItem('templateCustomizer-' + tn + '--Style', style); } catch(e) {}
+          window.location.reload();
+        }
+      };
+    })();
+    </script>
+  </head>
+
+  <body
+    class="{% if is_popup %}popup {% endif %}{% block bodyclass %}{% endblock %}"
+    data-admin-utc-offset="{% now 'Z' %}"
+  >
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        <!-- ── Vertical Sidebar ──────────────────────────────────────────────── -->
+        <aside
+          id="layout-menu"
+          class="layout-menu menu-vertical menu bg-menu-theme"
+        >
+          <!-- Brand / Logo -->
+          <div class="app-brand demo">
+            <a href="{% url 'admin:index' %}" class="app-brand-link gap-2">
+              <span class="app-brand-logo demo">
+                <!-- Vuexy-style two-bar logo in primary colour -->
+                <svg
+                  width="25"
+                  viewBox="0 0 25 42"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <rect
+                    fill="#696cff"
+                    x="0"
+                    y="0"
+                    width="11"
+                    height="42"
+                    rx="2"
+                  ></rect>
+                  <rect
+                    fill="#696cff"
+                    opacity="0.5"
+                    x="14"
+                    y="0"
+                    width="11"
+                    height="42"
+                    rx="2"
+                  ></rect>
+                </svg>
+              </span>
+              <span class="app-brand-text demo menu-text fw-bold">
+                {% block branding %}{{ site_header|default:_('Django Admin')
+                }}{% endblock %}
+              </span>
+            </a>
+            {% comment %} <a
+              href="javascript:void(0);"
+              class="layout-menu-toggle menu-link text-large ms-auto"
+            >
+              <i class="ti menu-toggle-icon d-none d-xl-block align-middle"></i>
+              <i class="ti ti-x d-block d-xl-none ti-md align-middle"></i>
+            </a> {% endcomment %}
+          </div>
+
+          <div class="menu-inner-shadow"></div>
+
+          <ul class="menu-inner py-1">
+            <!-- Home / Dashboard -->
+            <li
+              class="menu-item {% if request.path == '/admin/' or request.path == '/admin' %}active{% endif %}"
+            >
+              <a href="{% url 'admin:index' %}" class="menu-link">
+                <i class="menu-icon tf-icons ti ti-smart-home"></i>
+                <div>{% trans "Dashboard" %}</div>
+              </a>
+            </li>
+
+            <!-- Dynamic app list ─ generated from Django admin registry -->
+            {% for app in available_apps %}
+
+            {% if not forloop.first %}
+            <li class="menu-divider my-1"></li>
+            {% endif %}
+
+            <li class="menu-header mt-1">
+              <span class="menu-header-text">{{ app.name }}</span>
+            </li>
+
+            {% for model in app.models %}
+            <li class="menu-item {% if request.path == model.admin_url %}active{% endif %}">
+              <a href="{{ model.admin_url }}" class="menu-link">
+                <i class="menu-icon tf-icons ti {{ model.icon|default:'ti-circle' }}"></i>
+                <div>{{ model.name }}</div>
+              </a>
+            </li>
+            {% endfor %} {% empty %}
+            <li class="menu-item">
+              <span class="menu-link disabled text-muted"
+                >{% trans "No applications" %}</span
+              >
+            </li>
+            {% endfor %}
+          </ul>
+        </aside>
+        <!-- /Sidebar -->
+
+        <!-- ── Layout Page ───────────────────────────────────────────────────── -->
+        <div class="layout-page">
+          <!-- ── Top Navbar ──────────────────────────────────────────────────── -->
+          <nav
+            class="layout-navbar navbar navbar-expand-xl align-items-center bg-navbar-theme"
+            id="layout-navbar"
+          >
+            <div class="container-fluid">
+              <!-- Mobile menu toggle -->
+              <div
+                class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none"
+              >
+                <a class="nav-item nav-link px-0" href="javascript:void(0)">
+                  <i class="ti ti-menu-2 ti-md"></i>
+                </a>
+              </div>
+
+              <div
+                class="navbar-nav-right d-flex align-items-center"
+                id="navbar-collapse"
+              >
+                <ul class="navbar-nav flex-row align-items-center ms-auto">
+                  <!-- Language switcher -->
+                  {% get_available_languages as LANGUAGES %}
+                  {% get_current_language as CURRENT_LANG %}
+                  <li class="nav-item dropdown">
+                    <a class="nav-link btn btn-text-secondary btn-icon rounded-pill"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false"
+                       title="{% trans 'Language' %}">
+                      <i class="ti ti-language ti-md"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      {% for lang_code, lang_name in LANGUAGES %}
+                        <li>
+                          <form method="post" action="{% url 'set_language' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="language" value="{{ lang_code }}">
+                            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                            <button type="submit"
+                              class="dropdown-item d-flex align-items-center gap-2{% if lang_code == CURRENT_LANG %} active{% endif %}">
+                              <span class="badge bg-label-secondary" style="font-size:.7rem;min-width:2rem">{{ lang_code|upper }}</span>
+                              {{ lang_name }}
+                            </button>
+                          </form>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </li>
+
+                  <!-- Dark / Light / System mode switcher -->
+                  <li class="nav-item dropdown-style-switcher dropdown">
+                    <a
+                      class="nav-link btn btn-text-secondary btn-icon rounded-pill dropdown-toggle hide-arrow"
+                      href="javascript:void(0);"
+                      data-bs-toggle="dropdown"
+                    >
+                      <i class="ti ti-sun ti-md"></i>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-styles">
+                      <li>
+                        <a class="dropdown-item" href="javascript:void(0);" data-theme="light">
+                          <i class="ti ti-sun ti-md me-3"></i>{% trans "Light" %}
+                        </a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="javascript:void(0);" data-theme="dark">
+                          <i class="ti ti-moon-stars ti-md me-3"></i>{% trans "Dark" %}
+                        </a>
+                      </li>
+                      <li>
+                        <a class="dropdown-item" href="javascript:void(0);" data-theme="system">
+                          <i class="ti ti-device-desktop-analytics ti-md me-3"></i>{% trans "System" %}
+                        </a>
+                      </li>
+                    </ul>
+                  </li>
+
+                  {% block usertools %} {% if has_permission %}
+
+                  <!-- View site -->
+                  {% if site_url %}
+                  <li class="nav-item">
+                    <a
+                      class="nav-link btn btn-text-secondary btn-icon rounded-pill"
+                      href="{{ site_url }}"
+                      title="{% trans 'View site' %}"
+                      target="_blank"
+                    >
+                      <i class="ti ti-external-link ti-md"></i>
+                    </a>
+                  </li>
+                  {% endif %}
+
+                  <!-- User dropdown -->
+                  <li class="nav-item navbar-dropdown dropdown-user dropdown">
+                    <a
+                      class="nav-link dropdown-toggle hide-arrow p-0"
+                      href="javascript:void(0);"
+                      data-bs-toggle="dropdown"
+                    >
+                      <div class="avatar avatar-online">
+                        <span
+                          class="avatar-initial rounded-circle bg-label-primary"
+                        >
+                          {{ user.get_username|first|upper }}
+                        </span>
+                      </div>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li>
+                        <a class="dropdown-item mt-0" href="#">
+                          <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0 me-2">
+                              <div class="avatar">
+                                <span
+                                  class="avatar-initial rounded-circle bg-label-primary"
+                                >
+                                  {{ user.get_username|first|upper }}
+                                </span>
+                              </div>
+                            </div>
+                            <div class="flex-grow-1">
+                              <h6 class="mb-0">{% firstof user.get_full_name user.get_username %}</h6>
+                              <small class="text-muted">{% if user.is_superuser %}{% trans "Superuser" %}{% else %}{% trans "Staff" %}{% endif %}</small>
+                            </div>
+                          </div>
+                        </a>
+                      </li>
+                      <li><div class="dropdown-divider my-1 mx-n2"></div></li>
+                      {% if user.has_usable_password %}
+                      <li>
+                        <a
+                          class="dropdown-item"
+                          href="{% url 'admin:password_change' %}"
+                        >
+                          <i class="ti ti-lock me-3 ti-md"></i>{% trans "Change password" %}
+                        </a>
+                      </li>
+                      {% endif %}
+                      <li><div class="dropdown-divider my-1 mx-n2"></div></li>
+                      <li class="mt-1">
+                        <form
+                          id="logout-form"
+                          method="post"
+                          action="{% url 'admin:logout' %}"
+                        >
+                          {% csrf_token %}
+                          <button
+                            type="submit"
+                            class="dropdown-item text-danger w-100 text-start border-0 bg-transparent"
+                          >
+                            <i class="ti ti-logout me-3 ti-md"></i>{% trans "Log out" %}
+                          </button>
+                        </form>
+                      </li>
+                    </ul>
+                  </li>
+
+                  {% endif %}{# /has_permission #} {% endblock usertools %}
+                </ul>
+              </div>
+              {# /navbar-collapse #}
+            </div>
+          </nav>
+          <!-- /Navbar -->
+
+          <!-- ── Content Wrapper ──────────────────────────────────────────────── -->
+          <div class="content-wrapper">
+            <div
+              class="container-fluid flex-grow-1 container-p-y django-admin-content"
+            >
+              <!-- Breadcrumbs -->
+              {% block nav-breadcrumbs %}
+              <nav aria-label="{% trans 'Breadcrumbs' %}">
+                {% block breadcrumbs %}
+                <nav aria-label="breadcrumb" class="mb-3">
+                  <ol class="breadcrumb breadcrumb-style2">
+                    <li class="breadcrumb-item">
+                      <a href="{% url 'admin:index' %}">
+                        <i class="ti ti-smart-home ti-xs me-1"></i>{% trans "Home" %}
+                      </a>
+                    </li>
+                    {% if title %}
+                    <li class="breadcrumb-item active" aria-current="page">
+                      {{ title }}
+                    </li>
+                    {% endif %}
+                  </ol>
+                </nav>
+                {% endblock breadcrumbs %}
+              </nav>
+              {% endblock nav-breadcrumbs %}
+
+              <!-- Django messages as Vuexy alerts -->
+              {% block messages %} {% if messages %}
+              <div class="mb-4">
+                {% for message in messages %}
+                <div
+                  class="alert alert-{% if message.tags == 'success' %}success{% elif message.tags == 'error' %}danger{% elif message.tags == 'warning' %}warning{% else %}info{% endif %} alert-dismissible d-flex align-items-start"
+                  role="alert"
+                >
+                  <span class="alert-icon me-2">
+                    <i
+                      class="ti ti-{% if message.tags == 'success' %}circle-check{% elif message.tags == 'error' %}circle-x{% elif message.tags == 'warning' %}alert-triangle{% else %}info-circle{% endif %}"
+                    ></i>
+                  </span>
+                  <div>{{ message|capfirst }}</div>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                    aria-label="{% trans 'Close' %}"
+                  ></button>
+                </div>
+                {% endfor %}
+              </div>
+              {% endif %} {% endblock messages %}
+
+              <!-- Main content -->
+              <div id="content-start" tabindex="-1">
+                <div id="content" class="{% block coltype %}colM{% endblock %}">
+                  <!-- Page title row + action buttons -->
+                  <div class="titles-and-tools">
+                    <div class="titles">
+                      {% block pretitle %}{% endblock %}
+                      {% block content_title %}
+                        {% if title %}<h1 class="mb-1">{{ title }}</h1>{% endif %}
+                      {% endblock %}
+                      {% block content_subtitle %}
+                        {% if subtitle %}<h2 class="text-muted fw-normal" style="font-size:1rem">{{ subtitle }}</h2>{% endif %}
+                      {% endblock %}
+                    </div>
+                    {% block object-tools %}{% endblock %}
+                  </div>
+
+                  {% block content %}{{ content }}{% endblock %}
+                  {% block sidebar %}{% endblock %}
+                  <br class="clear" />
+                </div>
+                {# /content #}
+              </div>
+              {# /content-start #}
+            </div>
+            {# /container-xxl #}
+
+            <!-- Footer -->
+            <footer class="content-footer footer bg-footer-theme">
+              <div class="container-fluid">
+                <div
+                  class="footer-container d-flex align-items-center justify-content-between py-3 flex-md-row flex-column gap-2"
+                >
+                  <span class="text-body small">
+                    {% block footer %}{{ site_header|default:_("Django Administration") }}{% endblock %}
+                  </span>
+                  <span class="text-muted small">{% now "Y" %}</span>
+                </div>
+              </div>
+            </footer>
+
+            <div class="content-backdrop fade"></div>
+          </div>
+          {# /content-wrapper #}
+        </div>
+        {# /layout-page #}
+      </div>
+      {# /layout-container #}
+
+      <!-- Mobile overlay -->
+      <div class="layout-overlay layout-menu-toggle"></div>
+      <div class="drag-target"></div>
+    </div>
+    {# /layout-wrapper #}
+
+    <!-- ── Vuexy Core JavaScript ─────────────────────────────────────────────── -->
+    <script src="{% static 'vendor/libs/jquery/jquery.js' %}"></script>
+    <script src="{% static 'vendor/libs/popper/popper.js' %}"></script>
+    <script src="{% static 'vendor/js/bootstrap.js' %}"></script>
+    <script src="{% static 'vendor/libs/perfect-scrollbar/perfect-scrollbar.js' %}"></script>
+    <script src="{% static 'vendor/libs/node-waves/node-waves.js' %}"></script>
+    <script src="{% static 'vendor/libs/hammer/hammer.js' %}"></script>
+    <script src="{% static 'vendor/libs/typeahead-js/typeahead.js' %}"></script>
+    <script src="{% static 'vendor/js/menu.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <!-- Bridge: make jQuery available as django.jQuery for admin inline/widget JS -->
+    <script>
+      (function () {
+        "use strict";
+        window.django = window.django || {};
+        if (
+          typeof window.django.jQuery === "undefined" &&
+          typeof jQuery !== "undefined"
+        ) {
+          window.django.jQuery = jQuery;
+        }
+      })();
+    </script>
+
+    <!-- Per-page Django admin JavaScript (form widgets, inlines, autocomplete, etc.) -->
+    {% block extrabody %}{% endblock %} {% block nav-global %}{% endblock %}
+
+  </body>
+</html>

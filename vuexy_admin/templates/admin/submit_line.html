@@ -1,0 +1,39 @@
+{% load i18n admin_urls %}
+<div class="d-flex flex-column gap-2 submit-row">
+{% block submit-row %}
+  {% if show_save %}
+  <button type="submit" name="_save" class="btn btn-primary waves-effect waves-light w-100">
+    <i class="ti ti-device-floppy me-2"></i>{% translate 'Save' %}
+  </button>
+  {% endif %}
+  {% if show_save_and_continue %}
+  <button type="submit" name="_continue" class="btn btn-label-primary waves-effect w-100">
+    <i class="ti ti-check me-2"></i>{% if can_change %}{% translate 'Save and continue editing' %}{% else %}{% translate 'Save and view' %}{% endif %}
+  </button>
+  {% endif %}
+  {% if show_save_and_add_another %}
+  <button type="submit" name="_addanother" class="btn btn-label-success waves-effect w-100">
+    <i class="ti ti-copy-plus me-2"></i>{% translate 'Save and add another' %}
+  </button>
+  {% endif %}
+  {% if show_save_as_new %}
+  <button type="submit" name="_saveasnew" class="btn btn-label-secondary waves-effect w-100">
+    <i class="ti ti-copy me-2"></i>{% translate 'Save as new' %}
+  </button>
+  {% endif %}
+  {% if show_close %}
+  {% url opts|admin_urlname:'changelist' as changelist_url %}
+  <a role="button" href="{% add_preserved_filters changelist_url %}" class="btn btn-label-secondary w-100">
+    <i class="ti ti-x me-2"></i>{% translate 'Close' %}
+  </a>
+  {% endif %}
+  {% if show_delete_link and original %}
+  {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
+  <button name="_delete" class="btn btn-label-danger waves-effect w-100">
+    <a role="button" href="{% add_preserved_filters delete_url %}" class="btn btn-label-danger w-100 deletelink">
+      <i class="ti ti-trash me-2"></i>{% translate "Delete" %}
+    </a>
+  </button>
+  {% endif %}
+{% endblock %}
+</div>

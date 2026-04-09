@@ -1,0 +1,106 @@
+{% load i18n admin_urls static admin_modify %}
+<div class="js-inline-admin-formset inline-group mb-4" id="{{ inline_admin_formset.formset.prefix }}-group"
+     data-inline-type="tabular"
+     data-inline-formset="{{ inline_admin_formset.inline_formset_data }}">
+
+  {{ inline_admin_formset.formset.management_form }}
+
+  <div class="card{% if inline_admin_formset.is_collapsible %} collapsible-inline{% endif %}">
+    <div class="card-header d-flex align-items-center justify-content-between">
+      <h5 class="card-title mb-0" id="{{ inline_admin_formset.formset.prefix }}-heading">
+        <i class="ti ti-list-details me-2 text-primary"></i>
+        {% if inline_admin_formset.formset.max_num == 1 %}
+          {{ inline_admin_formset.opts.verbose_name|capfirst }}
+        {% else %}
+          {{ inline_admin_formset.opts.verbose_name_plural|capfirst }}
+        {% endif %}
+      </h5>
+      {% if inline_admin_formset.is_collapsible %}
+      <button type="button" class="btn btn-icon btn-sm btn-label-secondary"
+              data-bs-toggle="collapse"
+              data-bs-target="#inline-body-{{ inline_admin_formset.formset.prefix }}">
+        <i class="ti ti-chevron-up"></i>
+      </button>
+      {% endif %}
+    </div>
+
+    {% if inline_admin_formset.formset.non_form_errors %}
+    <div class="alert alert-danger mx-3 mt-3 mb-0">{{ inline_admin_formset.formset.non_form_errors }}</div>
+    {% endif %}
+
+    <div class="card-datatable table-responsive{% if inline_admin_formset.is_collapsible %} collapse show{% endif %}"
+         id="inline-body-{{ inline_admin_formset.formset.prefix }}">
+      <table class="table border-top tabular inline-related {% if forloop.last %}last-related{% endif %}">
+        <thead>
+          <tr>
+            <th class="original"></th>
+            {% for field in inline_admin_formset.fields %}
+            <th class="column-{{ field.name }}{% if field.required %} required{% endif %}{% if field.widget.is_hidden %} visually-hidden{% endif %}">
+              {{ field.label|capfirst }}
+              {% if field.help_text %}
+              <span class="text-muted" title="{{ field.help_text|striptags }}" data-bs-toggle="tooltip">
+                <i class="ti ti-info-circle ti-xs"></i>
+              </span>
+              {% endif %}
+            </th>
+            {% endfor %}
+            <th>{% if inline_admin_formset.formset.can_delete and inline_admin_formset.has_delete_permission %}{% translate "Delete?" %}{% endif %}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for inline_admin_form in inline_admin_formset %}
+          {% if inline_admin_form.form.non_field_errors %}
+          <tr class="row-form-errors">
+            <td colspan="{{ inline_admin_form|cell_count }}">
+              <div class="alert alert-danger py-2 mb-0">{{ inline_admin_form.form.non_field_errors }}</div>
+            </td>
+          </tr>
+          {% endif %}
+          <tr class="form-row{% if inline_admin_form.original or inline_admin_form.show_url %} has_original{% endif %}{% if forloop.last and inline_admin_formset.has_add_permission %} empty-form{% endif %}"
+              id="{{ inline_admin_formset.formset.prefix }}-{% if forloop.last and inline_admin_formset.has_add_permission %}empty{% else %}{{ forloop.counter0 }}{% endif %}">
+            <td class="original">
+              {% if inline_admin_form.original or inline_admin_form.show_url %}
+              <p class="small mb-1">
+                {% if inline_admin_form.original %}
+                {{ inline_admin_form.original }}
+                {% if inline_admin_form.model_admin.show_change_link and inline_admin_form.model_admin.has_registered_model %}
+                <a href="{% url inline_admin_form.model_admin.opts|admin_urlname:'change' inline_admin_form.original.pk|admin_urlquote %}"
+                   class="{{ inline_admin_formset.has_change_permission|yesno:'inlinechangelink,inlineviewlink' }}">
+                  {% if inline_admin_formset.has_change_permission %}{% translate "Change" %}{% else %}{% translate "View" %}{% endif %}
+                </a>
+                {% endif %}
+                {% endif %}
+                {% if inline_admin_form.show_url %}
+                <a href="{{ inline_admin_form.absolute_url }}">{% translate "View on site" %}</a>
+                {% endif %}
+              </p>
+              {% endif %}
+              {% if inline_admin_form.needs_explicit_pk_field %}{{ inline_admin_form.pk_field.field }}{% endif %}
+              {% if inline_admin_form.fk_field %}{{ inline_admin_form.fk_field.field }}{% endif %}
+            </td>
+            {% for fieldset in inline_admin_form %}
+              {% for line in fieldset %}
+                {% for field in line %}
+                <td class="{% if field.field.name %}field-{{ field.field.name }}{% endif %}{% if field.field.is_hidden %} visually-hidden{% endif %}">
+                  {% if field.is_readonly %}
+                  <p class="mb-0">{{ field.contents }}</p>
+                  {% else %}
+                  {{ field.field.errors.as_ul }}
+                  {{ field.field }}
+                  {% endif %}
+                </td>
+                {% endfor %}
+              {% endfor %}
+            {% endfor %}
+            <td class="delete text-center">
+              {% if inline_admin_formset.formset.can_delete and inline_admin_formset.has_delete_permission and inline_admin_form.original %}
+              {{ inline_admin_form.deletion_field.field }}
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

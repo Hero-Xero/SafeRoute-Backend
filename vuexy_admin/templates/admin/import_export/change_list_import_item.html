@@ -1,0 +1,6 @@
+{% load i18n admin_urls %}
+{% if has_import_permission %}
+<a href="{% url opts|admin_urlname:'import' %}" class="btn btn-label-secondary waves-effect text-nowrap">
+  <i class="ti ti-upload me-1"></i>{% translate "Import" %}
+</a>
+{% endif %}

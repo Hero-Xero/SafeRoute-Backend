@@ -1,0 +1,141 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static admin_list %}
+
+{% block title %}{% if cl.formset and cl.formset.errors %}{% translate "Error:" %} {% endif %}{{ block.super }}{% endblock %}
+
+{% block extrastyle %}
+  {{ block.super }}
+  {% if cl.formset %}
+    <link rel="stylesheet" href="{% static "admin/css/forms.css" %}">
+  {% endif %}
+  {% if cl.formset or action_form %}
+    <script src="{% url 'admin:jsi18n' %}"></script>
+  {% endif %}
+  {{ media.css }}
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+{{ media.js }}
+<script src="{% static 'admin/js/filters.js' %}" defer></script>
+{% endblock %}
+
+{% block bodyclass %}{{ block.super }} app-{{ opts.app_label }} model-{{ opts.model_name }} change-list{% endblock %}
+
+{% if not is_popup %}
+{% block breadcrumbs %}
+<ol class="breadcrumbs">
+<li><a href="{% url 'admin:index' %}">{% translate 'Home' %}</a></li>
+<li><a href="{% url 'admin:app_list' app_label=cl.opts.app_label %}">{{ cl.opts.app_config.verbose_name }}</a></li>
+<li aria-current="page">{{ cl.opts.verbose_name_plural|capfirst }}</li>
+</ol>
+{% endblock %}
+{% endif %}
+
+{% block coltype %}{% endblock %}
+
+{# Suppress the default object-tools UL — Add button is rendered inline in card header #}
+{% block object-tools %}{% endblock %}
+
+{% block content %}
+
+  {# ── Error note ────────────────────────────────────────────────────────── #}
+  {% if cl.formset and cl.formset.errors %}
+  <div class="alert alert-danger d-flex align-items-center mb-3" role="alert">
+    <i class="ti ti-alert-triangle me-2 flex-shrink-0"></i>
+    <div>
+      {% blocktranslate count counter=cl.formset.total_error_count %}Please correct the error below.{% plural %}Please correct the errors below.{% endblocktranslate %}
+      {{ cl.formset.non_form_errors }}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="card" id="changelist">
+
+    {# ── Card header — Filter row (Vuexy style) ────────────────────────── #}
+    <div class="card-header border-bottom pb-3">
+
+      {# Top row: title + search + Add button #}
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-0">
+        <h5 class="card-title mb-0">{{ cl.opts.verbose_name_plural|capfirst }}</h5>
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          {# Search form #}
+          {% block search %}{% search_form cl %}{% endblock %}
+          {# Add button #}
+          {% block object-tools-items %}
+            {% if has_add_permission %}
+            {% url cl.opts|admin_urlname:'add' as add_url %}
+            <a href="{% add_preserved_filters add_url is_popup to_field %}" class="btn btn-primary waves-effect waves-light text-nowrap">
+              <i class="ti ti-plus me-1"></i>{% blocktranslate with cl.opts.verbose_name as name %}Add {{ name }}{% endblocktranslate %}
+            </a>
+            {% endif %}
+          {% endblock %}
+        </div>
+      </div>
+
+      {# Filter selects row — shown only when filters exist #}
+      {% if cl.has_filters %}
+      <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mt-4">
+        <h6 class="mb-0 text-muted small fw-semibold text-uppercase me-2">
+          <i class="ti ti-adjustments-horizontal me-1"></i>{% translate 'Filter' %}
+        </h6>
+        <div class="d-flex align-items-end gap-3 flex-wrap flex-grow-1" id="changelist-filter">
+          {% block filters %}
+            {% for spec in cl.filter_specs %}{% admin_list_filter cl spec %}{% endfor %}
+          {% endblock %}
+          {# Facet count toggle #}
+          {% if cl.is_facets_optional %}
+          <div class="ms-auto">
+            {% if cl.add_facets %}
+            <a href="{{ cl.remove_facet_link }}" class="btn btn-sm btn-label-secondary">{% translate "Hide counts" %}</a>
+            {% else %}
+            <a href="{{ cl.add_facet_link }}" class="btn btn-sm btn-label-secondary">{% translate "Show counts" %}</a>
+            {% endif %}
+          </div>
+          {% endif %}
+          {# Clear all active filters #}
+          {% if cl.has_active_filters %}
+          <a href="{{ cl.clear_all_filters_qs }}" class="btn btn-sm btn-label-danger text-nowrap">
+            <i class="ti ti-x ti-xs me-1"></i>{% translate "Clear filters" %}
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      {% endif %}
+
+    </div>{# /.card-header #}
+
+    {# Date hierarchy — shown between header and table #}
+    {% block date_hierarchy %}
+      {% if cl.date_hierarchy %}{% date_hierarchy cl %}{% endif %}
+    {% endblock %}
+
+    {# ── Results form ──────────────────────────────────────────────────── #}
+    <div class="card-datatable table-responsive">
+      <form id="changelist-form" method="post"{% if cl.formset and cl.formset.is_multipart %} enctype="multipart/form-data"{% endif %} novalidate>{% csrf_token %}
+      {% if cl.formset %}
+        <div>{{ cl.formset.management_form }}</div>
+      {% endif %}
+
+      {% block result_list %}
+        {% if action_form and actions_on_top and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+        {% result_list cl %}
+        {% if action_form and actions_on_bottom and cl.show_admin_actions %}{% admin_actions %}{% endif %}
+      {% endblock %}
+
+      {% block pagination %}
+        {% pagination cl %}
+        {% if cl.formset and cl.result_count %}
+        <div class="px-3 pb-3">
+          <button type="submit" name="_save" class="btn btn-primary waves-effect waves-light">
+            <i class="ti ti-device-floppy me-1"></i>{% translate 'Save' %}
+          </button>
+        </div>
+        {% endif %}
+      {% endblock %}
+      </form>
+    </div>
+
+  </div>{# /.card #}
+
+{% endblock %}

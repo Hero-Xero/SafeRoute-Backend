@@ -131,9 +131,21 @@ class SafeRouteAdminSite(admin.AdminSite):
         if not request.user.is_superuser:
             return super().index(request, extra_context)
 
+        from users.models import DriverUser, GuardianUser
+
+        # Calculate live dynamic stats
+        total_users = User.objects.count()
+        active_drivers = DriverUser.objects.filter(is_active=True).count()
+        pending_signups = User.objects.filter(is_active=False).count()
+        total_guardians = GuardianUser.objects.count()
+
         context = {
             **self.each_context(request),
             "app_list": self.get_app_list(request),  # still show apps list
+            "total_users": total_users,
+            "active_drivers": active_drivers,
+            "pending_signups": pending_signups,
+            "total_guardians": total_guardians,
         }
         return TemplateResponse(request, "admin/index.html", context)
 

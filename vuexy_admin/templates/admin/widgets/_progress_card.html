@@ -1,0 +1,57 @@
+{% load i18n %}
+<!--
+  _progress_card.html — header stat + labelled progress-bar metrics.
+  Variables: title, metrics (list of dicts: label/value/pct/color/icon),
+             subtitle, total_value, total_badge, total_badge_color
+-->
+<div class="card h-100">
+  <div class="card-header d-flex justify-content-between align-items-start pb-0">
+    <div>
+      <h5 class="mb-1 card-title">{{ title }}</h5>
+      {% if subtitle %}<p class="card-subtitle mb-0">{{ subtitle }}</p>{% endif %}
+      {% if total_value %}
+        <div class="d-flex align-items-center gap-2 mt-2">
+          <h3 class="mb-0">{{ total_value }}</h3>
+          {% if total_badge %}
+            <span class="badge bg-label-{{ total_badge_color|default:'success' }}">{{ total_badge }}</span>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card-body">
+    <div class="border rounded p-4">
+      <div class="row gap-4 gap-sm-0">
+        {% for metric in metrics %}
+          <div class="col-12 col-sm">
+            <div class="d-flex gap-2 align-items-center mb-1">
+              {% if metric.icon %}
+                <div class="badge rounded bg-label-{{ metric.color|default:'primary' }} p-1">
+                  <i class="ti {{ metric.icon }} ti-sm"></i>
+                </div>
+              {% endif %}
+              <h6 class="mb-0 fw-normal">{{ metric.label }}</h6>
+            </div>
+            <h4 class="my-2">{{ metric.value }}</h4>
+            <div class="progress w-75" style="height:4px">
+              <div
+                class="progress-bar bg-{{ metric.color|default:'primary' }}"
+                role="progressbar"
+                style="width: {{ metric.pct }}%"
+                aria-valuenow="{{ metric.pct }}"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              ></div>
+            </div>
+          </div>
+          {% if not forloop.last %}
+            <div class="col-auto d-none d-sm-flex px-0">
+              <div style="width:1px; background:var(--bs-border-color); margin:0 auto;"></div>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
