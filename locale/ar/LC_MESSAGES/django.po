@@ -1,0 +1,1712 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-14 18:20+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#: children/admin.py:49 users/admin.py:65 users/admin.py:103 users/admin.py:158
+msgid "Personal Info"
+msgstr "معلومات شخصية"
+
+#: children/admin.py:55 trips/admin.py:156
+msgid "School Info"
+msgstr "معلومات المدرسة"
+
+#: children/admin.py:58
+msgid "Additional Info"
+msgstr "معلومات إضافية"
+
+#: children/admin.py:61 notifications/admin.py:96 notifications/admin.py:122
+#: notifications/admin.py:156 notifications/admin.py:198 trips/admin.py:134
+#: trips/admin.py:159 trips/admin.py:205 users/admin.py:71 users/admin.py:112
+#: users/admin.py:167
+msgid "Important Dates"
+msgstr "تواريخ هامة"
+
+#: children/admin.py:68 users/admin.py:88
+msgid "Full Name"
+msgstr "الاسم الكامل"
+
+#: children/apps.py:8 children/models.py:46
+#: saferoute_backend/admin_site/configs.py:24 saferoute_backend/settings.py:247
+msgid "Children"
+msgstr "الأطفال"
+
+#: children/enums.py:6
+msgid "KG 1"
+msgstr "تمهيدي١"
+
+#: children/enums.py:7
+msgid "KG 2"
+msgstr "تمهيدي٢"
+
+#: children/enums.py:8
+msgid "Grade 1"
+msgstr "الصف الأول"
+
+#: children/enums.py:9
+msgid "Grade 2"
+msgstr "الصف الثاني"
+
+#: children/enums.py:10
+msgid "Grade 3"
+msgstr "الصف الثالث"
+
+#: children/enums.py:11
+msgid "Grade 4"
+msgstr "الصف الرابع"
+
+#: children/enums.py:12
+msgid "Grade 5"
+msgstr "الصف الخامس"
+
+#: children/enums.py:13
+msgid "Grade 6"
+msgstr "الصف السادس"
+
+#: children/enums.py:14
+msgid "Grade 7"
+msgstr "الصف السابع"
+
+#: children/enums.py:15
+msgid "Grade 8"
+msgstr "الصف الثامن"
+
+#: children/enums.py:16
+msgid "Grade 9"
+msgstr "الصف التاسع"
+
+#: children/enums.py:17
+msgid "Grade 10"
+msgstr "الصف العاشر"
+
+#: children/enums.py:18
+msgid "Grade 11"
+msgstr "الصف الحادي عشر"
+
+#: children/enums.py:19
+msgid "Grade 12"
+msgstr "الصف الثاني عشر"
+
+#: children/enums.py:23 users/enums.py:12
+msgid "Male"
+msgstr "ذكر"
+
+#: children/enums.py:24 users/enums.py:13
+msgid "Female"
+msgstr "أنثى"
+
+#: children/models.py:14 users/enums.py:8
+msgid "Guardian"
+msgstr "ولي أمر"
+
+#: children/models.py:16 users/forms/admins.py:52 users/models.py:23
+msgid "First Name"
+msgstr "الاسم الأول"
+
+#: children/models.py:17 users/forms/admins.py:53 users/models.py:29
+msgid "Last Name"
+msgstr "اسم العائلة"
+
+#: children/models.py:18 users/models.py:38
+msgid "Date of Birth"
+msgstr "تاريخ الميلاد"
+
+#: children/models.py:20 users/models.py:40
+msgid "Gender"
+msgstr "الجنس"
+
+#: children/models.py:25
+msgid "Grade"
+msgstr "الصف"
+
+#: children/models.py:29 trips/models.py:50
+msgid "School Name"
+msgstr "اسم المدرسة"
+
+#: children/models.py:36 users/models.py:21
+msgid "Profile Image"
+msgstr "الصورة الشخصية"
+
+#: children/models.py:38
+msgid "Student ID"
+msgstr "رقم الطالب"
+
+#: children/models.py:39 trips/admin.py:201 trips/models.py:183
+msgid "Notes"
+msgstr "ملاحظات"
+
+#: children/models.py:40 notifications/models.py:27 notifications/models.py:51
+#: trips/models.py:33 trips/models.py:64 trips/models.py:129 users/models.py:43
+msgid "Active"
+msgstr "نشط"
+
+#: children/models.py:41 notifications/models.py:28 notifications/models.py:52
+#: notifications/models.py:113 notifications/models.py:151 trips/models.py:34
+#: trips/models.py:65 trips/models.py:91 trips/models.py:130
+#: trips/models.py:184 trips/models.py:224
+msgid "Created At"
+msgstr "تاريخ الإنشاء"
+
+#: children/models.py:42 notifications/models.py:29 notifications/models.py:53
+#: notifications/models.py:114 notifications/models.py:152 trips/models.py:35
+#: trips/models.py:66 trips/models.py:92 trips/models.py:131
+#: trips/models.py:185 trips/models.py:225
+msgid "Updated At"
+msgstr "تاريخ التحديث"
+
+#: children/models.py:45 trips/models.py:115 trips/models.py:208
+msgid "Child"
+msgstr "طفل"
+
+#: notifications/admin.py:93
+msgid "Device Info"
+msgstr ""
+
+#: notifications/admin.py:113
+msgid "Type"
+msgstr ""
+
+#: notifications/admin.py:116
+msgid "English Content"
+msgstr ""
+
+#: notifications/admin.py:119
+msgid "Arabic Content"
+msgstr ""
+
+#: notifications/admin.py:143 notifications/models.py:69
+msgid "Recipient"
+msgstr ""
+
+#: notifications/admin.py:146 notifications/admin.py:189
+msgid "Notification Content"
+msgstr ""
+
+#: notifications/admin.py:149 notifications/admin.py:173
+#: notifications/models.py:82 trips/admin.py:222 trips/models.py:156
+#: trips/models.py:218
+msgid "Status"
+msgstr ""
+
+#: notifications/admin.py:152
+msgid "Related Objects"
+msgstr ""
+
+#: notifications/admin.py:192
+msgid "Target Audience"
+msgstr ""
+
+#: notifications/admin.py:195
+msgid "Sending Info"
+msgstr ""
+
+#: notifications/admin.py:211
+msgid "All Users"
+msgstr ""
+
+#: notifications/admin.py:214
+msgid "Guardians"
+msgstr ""
+
+#: notifications/admin.py:216
+msgid "Drivers"
+msgstr ""
+
+#: notifications/admin.py:217
+msgid "None"
+msgstr ""
+
+#: notifications/admin.py:218
+msgid "Target"
+msgstr ""
+
+#: notifications/apps.py:8 notifications/models.py:118
+#: saferoute_backend/admin_site/configs.py:40 saferoute_backend/settings.py:261
+msgid "Notifications"
+msgstr "الإشعارات"
+
+#: notifications/enums.py:6
+msgid "Trip Started"
+msgstr ""
+
+#: notifications/enums.py:7
+msgid "Trip Completed"
+msgstr ""
+
+#: notifications/enums.py:8
+msgid "Trip Cancelled"
+msgstr ""
+
+#: notifications/enums.py:9
+msgid "Child Picked Up"
+msgstr ""
+
+#: notifications/enums.py:10
+msgid "Child Dropped Off"
+msgstr ""
+
+#: notifications/enums.py:11
+msgid "Child Marked Absent"
+msgstr ""
+
+#: notifications/enums.py:12
+msgid "Bus Approaching Your Stop"
+msgstr ""
+
+#: notifications/enums.py:13
+msgid "Bus Delayed"
+msgstr ""
+
+#: notifications/enums.py:14
+msgid "General"
+msgstr ""
+
+#: notifications/enums.py:15 vuexy_admin/templates/admin/base.html:322
+msgid "System"
+msgstr ""
+
+#: notifications/enums.py:16
+msgid "Subscription Expiring"
+msgstr ""
+
+#: notifications/enums.py:17
+msgid "Subscription Expired"
+msgstr ""
+
+#: notifications/enums.py:21
+msgid "Pending"
+msgstr ""
+
+#: notifications/enums.py:22 notifications/models.py:142
+msgid "Sent"
+msgstr ""
+
+#: notifications/enums.py:23
+msgid "Failed"
+msgstr ""
+
+#: notifications/enums.py:24 notifications/models.py:92
+msgid "Read"
+msgstr ""
+
+#: notifications/enums.py:28
+msgid "Push Notification"
+msgstr ""
+
+#: notifications/enums.py:29
+msgid "In-App"
+msgstr ""
+
+#: notifications/enums.py:30 users/forms/admins.py:54
+msgid "Email"
+msgstr ""
+
+#: notifications/enums.py:31
+msgid "SMS"
+msgstr ""
+
+#: notifications/enums.py:35
+msgid "Android"
+msgstr ""
+
+#: notifications/enums.py:36
+msgid "iOS"
+msgstr ""
+
+#: notifications/enums.py:37
+msgid "Web"
+msgstr ""
+
+#: notifications/models.py:19
+#: vuexy_admin/templates/admin/object_history.html:29
+msgid "User"
+msgstr ""
+
+#: notifications/models.py:21 notifications/models.py:32
+msgid "Device Token"
+msgstr ""
+
+#: notifications/models.py:23
+msgid "Device Type"
+msgstr ""
+
+#: notifications/models.py:33
+msgid "Device Tokens"
+msgstr "رموز الأجهزة"
+
+#: notifications/models.py:43 notifications/models.py:72
+#: notifications/models.py:135
+msgid "Notification Type"
+msgstr ""
+
+#: notifications/models.py:47
+msgid "Title (English)"
+msgstr ""
+
+#: notifications/models.py:48
+msgid "Title (Arabic)"
+msgstr ""
+
+#: notifications/models.py:49
+msgid "Body (English)"
+msgstr ""
+
+#: notifications/models.py:50
+msgid "Body (Arabic)"
+msgstr ""
+
+#: notifications/models.py:56
+msgid "Notification Template"
+msgstr ""
+
+#: notifications/models.py:57
+msgid "Notification Templates"
+msgstr "قوالب الإشعارات"
+
+#: notifications/models.py:77
+msgid "Channel"
+msgstr ""
+
+#: notifications/models.py:86 notifications/models.py:132
+msgid "Title"
+msgstr ""
+
+#: notifications/models.py:87 notifications/models.py:133
+msgid "Body"
+msgstr ""
+
+#: notifications/models.py:89
+msgid "Extra Data"
+msgstr ""
+
+#: notifications/models.py:90
+msgid "Additional JSON payload (e.g. trip_id, child_id, etc.)"
+msgstr ""
+
+#: notifications/models.py:93
+msgid "Read At"
+msgstr ""
+
+#: notifications/models.py:94 notifications/models.py:143
+msgid "Sent At"
+msgstr ""
+
+#: notifications/models.py:100
+msgid "Related Trip"
+msgstr ""
+
+#: notifications/models.py:107
+msgid "Related Child"
+msgstr ""
+
+#: notifications/models.py:110
+msgid "Error Message"
+msgstr ""
+
+#: notifications/models.py:111
+msgid "Populated if sending failed"
+msgstr ""
+
+#: notifications/models.py:117
+msgid "Notification"
+msgstr "إشعار"
+
+#: notifications/models.py:139
+msgid "Send to All Users"
+msgstr ""
+
+#: notifications/models.py:140
+msgid "Send to Guardians"
+msgstr ""
+
+#: notifications/models.py:141
+msgid "Send to Drivers"
+msgstr ""
+
+#: notifications/models.py:149
+msgid "Sent By"
+msgstr ""
+
+#: notifications/models.py:155
+msgid "Broadcast Notification"
+msgstr ""
+
+#: notifications/models.py:156
+msgid "Broadcast Notifications"
+msgstr "إشعارات البث"
+
+#: saferoute_backend/admin.py:119
+msgid "SafeRoute Admin"
+msgstr ""
+
+#: saferoute_backend/admin.py:120
+msgid "SafeRoute Admin Portal"
+msgstr ""
+
+#: saferoute_backend/admin.py:121
+msgid "Welcome to SafeRoute Admin Panel"
+msgstr ""
+
+#: saferoute_backend/admin_site/configs.py:8
+msgid "Groups and Permissions"
+msgstr ""
+
+#: saferoute_backend/admin_site/configs.py:15 saferoute_backend/settings.py:239
+msgid "Users"
+msgstr ""
+
+#: saferoute_backend/admin_site/configs.py:31 saferoute_backend/settings.py:253
+msgid "Trips & Routes"
+msgstr ""
+
+#: saferoute_backend/middlewares.py:21
+msgid "An error occurred"
+msgstr ""
+
+#: saferoute_backend/middlewares.py:27
+msgid "Done successfully"
+msgstr ""
+
+#: saferoute_backend/settings.py:144
+msgid "English"
+msgstr ""
+
+#: saferoute_backend/settings.py:145
+msgid "Arabic"
+msgstr ""
+
+#: saferoute_backend/settings.py:233
+msgid "Users & Permissions"
+msgstr ""
+
+#: templates/admin/index.html:4 vuexy_admin/templates/admin/index.html:4
+msgid "Site administration"
+msgstr ""
+
+#: templates/admin/index.html:10 vuexy_admin/templates/admin/base.html:215
+#: vuexy_admin/templates/admin/index.html:10
+msgid "Dashboard"
+msgstr ""
+
+#: templates/admin/index.html:20
+msgid "User Statistics"
+msgstr ""
+
+#: templates/admin/index.html:43
+msgid "Logistics & Trips"
+msgstr ""
+
+#: templates/admin/index.html:66
+msgid "Children & Notifications"
+msgstr ""
+
+#: templates/admin/index.html:89
+msgid "Modules"
+msgstr ""
+
+#: templates/admin/index.html:119 vuexy_admin/templates/admin/app_list.html:29
+#: vuexy_admin/templates/admin/index.html:50
+msgid "Add"
+msgstr ""
+
+#: templates/admin/index.html:124 vuexy_admin/templates/admin/app_list.html:38
+#: vuexy_admin/templates/admin/edit_inline/stacked.html:47
+#: vuexy_admin/templates/admin/edit_inline/tabular.html:69
+#: vuexy_admin/templates/admin/index.html:55
+msgid "Change"
+msgstr ""
+
+#: templates/admin/index.html:139 vuexy_admin/templates/admin/index.html:70
+msgid "You don't have permission to view or edit anything."
+msgstr ""
+
+#: templates/admin/index.html:151 vuexy_admin/templates/admin/index.html:80
+msgid "Recent Actions"
+msgstr ""
+
+#: templates/admin/index.html:153 vuexy_admin/templates/admin/index.html:82
+msgid "My actions"
+msgstr ""
+
+#: templates/admin/index.html:160 vuexy_admin/templates/admin/index.html:89
+msgid "None available"
+msgstr ""
+
+#: templates/admin/index.html:184 vuexy_admin/templates/admin/index.html:113
+msgid "Unknown content"
+msgstr ""
+
+#: templates/admin/index.html:188 vuexy_admin/templates/admin/index.html:117
+msgid "Added"
+msgstr ""
+
+#: templates/admin/index.html:188 vuexy_admin/templates/admin/index.html:117
+msgid "Changed"
+msgstr ""
+
+#: templates/admin/index.html:188 users/models.py:49
+#: vuexy_admin/templates/admin/index.html:117
+msgid "Deleted"
+msgstr ""
+
+#: trips/admin.py:131
+msgid "Bus Info"
+msgstr ""
+
+#: trips/admin.py:153
+msgid "Route Info"
+msgstr ""
+
+#: trips/admin.py:166
+msgid "Stops"
+msgstr ""
+
+#: trips/admin.py:188
+msgid "Trip Info"
+msgstr "معلومات الرحلة"
+
+#: trips/admin.py:191
+msgid "Assigned Resources"
+msgstr ""
+
+#: trips/admin.py:194
+msgid "Timing"
+msgstr ""
+
+#: trips/admin.py:197
+msgid "Live Location"
+msgstr ""
+
+#: trips/apps.py:8 trips/models.py:189
+msgid "Trips"
+msgstr "الرحلات"
+
+#: trips/enums.py:6
+msgid "Scheduled"
+msgstr "مجدولة"
+
+#: trips/enums.py:7
+msgid "In Progress"
+msgstr "قيد التنفيذ"
+
+#: trips/enums.py:8
+msgid "Completed"
+msgstr "مكتملة"
+
+#: trips/enums.py:9
+msgid "Cancelled"
+msgstr "ملغاة"
+
+#: trips/enums.py:13
+msgid "Pickup (To School)"
+msgstr ""
+
+#: trips/enums.py:14
+msgid "Drop-off (From School)"
+msgstr ""
+
+#: trips/enums.py:18
+msgid "Sunday"
+msgstr ""
+
+#: trips/enums.py:19
+msgid "Monday"
+msgstr ""
+
+#: trips/enums.py:20
+msgid "Tuesday"
+msgstr ""
+
+#: trips/enums.py:21
+msgid "Wednesday"
+msgstr ""
+
+#: trips/enums.py:22
+msgid "Thursday"
+msgstr ""
+
+#: trips/enums.py:23
+msgid "Friday"
+msgstr ""
+
+#: trips/enums.py:24
+msgid "Saturday"
+msgstr ""
+
+#: trips/enums.py:28
+msgid "Waiting"
+msgstr ""
+
+#: trips/enums.py:29
+msgid "Picked Up"
+msgstr ""
+
+#: trips/enums.py:30
+msgid "Dropped Off"
+msgstr ""
+
+#: trips/enums.py:31
+msgid "Absent"
+msgstr ""
+
+#: trips/enums.py:35
+msgid "Available"
+msgstr ""
+
+#: trips/enums.py:36
+msgid "On Trip"
+msgstr ""
+
+#: trips/enums.py:37
+msgid "Under Maintenance"
+msgstr ""
+
+#: trips/enums.py:38
+msgid "Out of Service"
+msgstr ""
+
+#: trips/models.py:15
+msgid "Plate Number"
+msgstr ""
+
+#: trips/models.py:16
+msgid "Bus Model"
+msgstr ""
+
+#: trips/models.py:18
+msgid "Capacity"
+msgstr ""
+
+#: trips/models.py:26 trips/models.py:165 users/enums.py:7
+msgid "Driver"
+msgstr ""
+
+#: trips/models.py:29
+msgid "Bus Status"
+msgstr ""
+
+#: trips/models.py:38 trips/models.py:172
+msgid "Bus"
+msgstr "حافلة"
+
+#: trips/models.py:39
+msgid "Buses"
+msgstr "الحافلات"
+
+#: trips/models.py:48
+msgid "Route Name"
+msgstr ""
+
+#: trips/models.py:49
+msgid "Description"
+msgstr ""
+
+#: trips/models.py:52
+msgid "School Latitude"
+msgstr ""
+
+#: trips/models.py:55
+msgid "School Longitude"
+msgstr ""
+
+#: trips/models.py:62
+msgid "Assigned Bus"
+msgstr ""
+
+#: trips/models.py:69 trips/models.py:83 trips/models.py:109
+#: trips/models.py:148
+msgid "Route"
+msgstr "مسار"
+
+#: trips/models.py:70
+msgid "Routes"
+msgstr "المسارات"
+
+#: trips/models.py:85
+msgid "Stop Name"
+msgstr ""
+
+#: trips/models.py:86
+msgid "Latitude"
+msgstr ""
+
+#: trips/models.py:87
+msgid "Longitude"
+msgstr ""
+
+#: trips/models.py:88
+msgid "Order"
+msgstr ""
+
+#: trips/models.py:89
+msgid "Expected Pickup Time"
+msgstr ""
+
+#: trips/models.py:90
+msgid "Expected Drop-off Time"
+msgstr ""
+
+#: trips/models.py:95
+msgid "Route Stop"
+msgstr ""
+
+#: trips/models.py:96
+msgid "Route Stops"
+msgstr "محطات المسار"
+
+#: trips/models.py:122
+msgid "Pickup/Dropoff Stop"
+msgstr ""
+
+#: trips/models.py:125
+msgid "Subscription Days"
+msgstr ""
+
+#: trips/models.py:127
+msgid "Days of week this child is subscribed (e.g. [\"SUNDAY\",\"MONDAY\"])"
+msgstr ""
+
+#: trips/models.py:134
+msgid "Route Child"
+msgstr ""
+
+#: trips/models.py:135
+msgid "Route Children"
+msgstr "أطفال المسار"
+
+#: trips/models.py:151
+msgid "Trip Type"
+msgstr ""
+
+#: trips/models.py:174
+msgid "Scheduled Date"
+msgstr ""
+
+#: trips/models.py:175
+msgid "Actual Start Time"
+msgstr ""
+
+#: trips/models.py:176
+msgid "Actual End Time"
+msgstr ""
+
+#: trips/models.py:178
+msgid "Current Latitude"
+msgstr ""
+
+#: trips/models.py:181
+msgid "Current Longitude"
+msgstr ""
+
+#: trips/models.py:188 trips/models.py:202
+msgid "Trip"
+msgstr ""
+
+#: trips/models.py:215
+msgid "Stop"
+msgstr ""
+
+#: trips/models.py:222
+msgid "Picked Up At"
+msgstr ""
+
+#: trips/models.py:223
+msgid "Dropped Off At"
+msgstr ""
+
+#: trips/models.py:228
+msgid "Trip Child Record"
+msgstr ""
+
+#: trips/models.py:229
+msgid "Trip Children Records"
+msgstr "سجلات أطفال الرحلات"
+
+#: users/admin.py:68
+msgid "Permissions"
+msgstr ""
+
+#: users/admin.py:109 users/admin.py:164
+msgid "Account Status"
+msgstr ""
+
+#: users/admin.py:130
+msgid "Your Driver Account Credentials"
+msgstr ""
+
+#: users/admin.py:185
+msgid "Your Guardian Account Credentials"
+msgstr ""
+
+#: users/apis/driver/v1/views.py:25 users/apis/driver/v1/views.py:105
+#: users/apis/driver/v1/views.py:125 users/apis/driver/v1/views.py:164
+msgid "User is not a Driver."
+msgstr ""
+
+#: users/apis/driver/v1/views.py:31 users/apis/gaurdian/v1/views.py:35
+msgid "Login successful."
+msgstr ""
+
+#: users/apis/driver/v1/views.py:41 users/apis/gaurdian/v1/views.py:44
+msgid "OTP has been sent to your email."
+msgstr ""
+
+#: users/apis/driver/v1/views.py:67 users/apis/driver/v1/views.py:161
+msgid "No Driver Account found with this email."
+msgstr ""
+
+#: users/apis/driver/v1/views.py:77 users/apis/gaurdian/v1/views.py:77
+msgid "OTP verified. Please set your password."
+msgstr ""
+
+#: users/apis/driver/v1/views.py:90 users/apis/gaurdian/v1/views.py:90
+msgid "Invalid or expired OTP."
+msgstr ""
+
+#: users/apis/driver/v1/views.py:111 users/apis/gaurdian/v1/views.py:114
+msgid "A new OTP has been sent to your email."
+msgstr ""
+
+#: users/apis/driver/v1/views.py:131 users/apis/gaurdian/v1/views.py:134
+msgid "Incorrect old password."
+msgstr ""
+
+#: users/apis/driver/v1/views.py:136 users/apis/gaurdian/v1/views.py:139
+msgid "Password has been changed successfully."
+msgstr ""
+
+#: users/apis/driver/v1/views.py:168 users/apis/gaurdian/v1/views.py:169
+msgid "Invalid or expired reset token."
+msgstr ""
+
+#: users/apis/driver/v1/views.py:176 users/apis/gaurdian/v1/views.py:177
+msgid "Password set successfully. Login successful."
+msgstr ""
+
+#: users/apis/gaurdian/v1/views.py:29 users/apis/gaurdian/v1/views.py:107
+#: users/apis/gaurdian/v1/views.py:128 users/apis/gaurdian/v1/views.py:165
+msgid "User is not a Guardian."
+msgstr ""
+
+#: users/apis/gaurdian/v1/views.py:67 users/apis/gaurdian/v1/views.py:162
+msgid "No Guardian Account found with this email."
+msgstr ""
+
+#: users/apis/serializers.py:20
+msgid "Unable to log in with provided credentials."
+msgstr ""
+
+#: users/apis/serializers.py:23 users/apis/serializers.py:50
+msgid "Must include 'email' and 'password'."
+msgstr ""
+
+#: users/apis/serializers.py:47
+msgid "Incorrect email or password."
+msgstr ""
+
+#: users/apis/serializers.py:64 users/apis/serializers.py:80
+msgid "Passwords do not match."
+msgstr ""
+
+#: users/apis/serializers.py:67
+msgid "New password cannot be the same as old password."
+msgstr ""
+
+#: users/enums.py:6 users/models.py:59
+msgid "Admin"
+msgstr ""
+
+#: users/forms/admins.py:55
+msgid "Phone Number"
+msgstr ""
+
+#: users/forms/admins.py:56
+msgid "Is Superuser"
+msgstr ""
+
+#: users/forms/admins.py:57
+msgid "Is Staff User"
+msgstr ""
+
+#: users/forms/admins.py:58
+msgid "Is Active"
+msgstr ""
+
+#: users/models.py:15
+msgid "User Type"
+msgstr ""
+
+#: users/models.py:25
+msgid "Second Name"
+msgstr ""
+
+#: users/models.py:27
+msgid "Third Name"
+msgstr ""
+
+#: users/models.py:31
+msgid "Email address"
+msgstr ""
+
+#: users/models.py:33
+msgid "Mobile Number"
+msgstr ""
+
+#: users/models.py:41
+msgid "Date Joined"
+msgstr ""
+
+#: users/models.py:43
+msgid ""
+"Designates whether this user should be treated as active. Unselect this "
+"instead of deleting accounts"
+msgstr ""
+
+#: users/models.py:45
+msgid "Staff status"
+msgstr ""
+
+#: users/models.py:45
+msgid "Designates whether the user can log into this admin site."
+msgstr ""
+
+#: users/models.py:47
+msgid "Verified"
+msgstr ""
+
+#: users/models.py:47
+msgid "Designates whether the user has verified their email address."
+msgstr ""
+
+#: users/models.py:49
+msgid "Designates whether the user has deleted their account."
+msgstr ""
+
+#: users/models.py:60
+msgid "Admins"
+msgstr ""
+
+#: users/models.py:77
+msgid "Driver User"
+msgstr ""
+
+#: users/models.py:78
+msgid "Driver Users"
+msgstr "السائقين"
+
+#: users/models.py:94
+msgid "Guardian User"
+msgstr ""
+
+#: users/models.py:95
+msgid "Guardian Users"
+msgstr "أولياء الأمور"
+
+#: users/services/otp_services.py:70
+msgid "Your OTP Code"
+msgstr ""
+
+#: vuexy_admin/site.py:32
+msgid "Users & Authentication"
+msgstr ""
+
+#: vuexy_admin/templates/admin/404.html:4
+#: vuexy_admin/templates/admin/404.html:8
+msgid "Page not found"
+msgstr ""
+
+#: vuexy_admin/templates/admin/404.html:10
+msgid "We’re sorry, but the requested page could not be found."
+msgstr ""
+
+#: vuexy_admin/templates/admin/500.html:6
+#: vuexy_admin/templates/admin/app_index.html:10
+#: vuexy_admin/templates/admin/auth/user/change_password.html:17
+#: vuexy_admin/templates/admin/base.html:430
+#: vuexy_admin/templates/admin/change_form.html:20
+#: vuexy_admin/templates/admin/change_list.html:28
+#: vuexy_admin/templates/admin/delete_confirmation.html:14
+#: vuexy_admin/templates/admin/delete_selected_confirmation.html:14
+#: vuexy_admin/templates/admin/invalid_setup.html:6
+#: vuexy_admin/templates/admin/object_history.html:6
+#: vuexy_admin/templates/registration/logged_out.html:6
+#: vuexy_admin/templates/registration/password_change_done.html:13
+#: vuexy_admin/templates/registration/password_change_form.html:16
+#: vuexy_admin/templates/registration/password_reset_complete.html:6
+#: vuexy_admin/templates/registration/password_reset_confirm.html:8
+#: vuexy_admin/templates/registration/password_reset_done.html:6
+#: vuexy_admin/templates/registration/password_reset_form.html:8
+msgid "Home"
+msgstr ""
+
+#: vuexy_admin/templates/admin/500.html:7
+msgid "Server error"
+msgstr ""
+
+#: vuexy_admin/templates/admin/500.html:11
+msgid "Server error (500)"
+msgstr ""
+
+#: vuexy_admin/templates/admin/500.html:14
+msgid "Server Error <em>(500)</em>"
+msgstr ""
+
+#: vuexy_admin/templates/admin/500.html:15
+msgid ""
+"There’s been an error. It’s been reported to the site administrators via "
+"email and should be fixed shortly. Thanks for your patience."
+msgstr ""
+
+#: vuexy_admin/templates/admin/actions.html:18
+msgid "Run"
+msgstr ""
+
+#: vuexy_admin/templates/admin/actions.html:32
+#, python-format
+msgid "Select all %(total_count)s %(module_name)s"
+msgstr ""
+
+#: vuexy_admin/templates/admin/actions.html:36
+msgid "Clear selection"
+msgstr ""
+
+#: vuexy_admin/templates/admin/app_index.html:8
+#: vuexy_admin/templates/admin/base.html:424
+msgid "Breadcrumbs"
+msgstr ""
+
+#: vuexy_admin/templates/admin/app_list.html:12
+msgid "Model name"
+msgstr ""
+
+#: vuexy_admin/templates/admin/app_list.html:13
+msgid "Add link"
+msgstr ""
+
+#: vuexy_admin/templates/admin/app_list.html:14
+msgid "Change or view list link"
+msgstr ""
+
+#: vuexy_admin/templates/admin/app_list.html:36
+#: vuexy_admin/templates/admin/edit_inline/stacked.html:47
+#: vuexy_admin/templates/admin/edit_inline/tabular.html:69
+msgid "View"
+msgstr ""
+
+#: vuexy_admin/templates/admin/app_list.html:50
+msgid "You don’t have permission to view or edit anything."
+msgstr ""
+
+#: vuexy_admin/templates/admin/auth/user/add_form.html:6
+msgid "After you’ve created a user, you’ll be able to edit more user options."
+msgstr ""
+
+#: vuexy_admin/templates/admin/auth/user/change_password.html:5
+#: vuexy_admin/templates/admin/change_form.html:4
+#: vuexy_admin/templates/admin/change_list.html:4
+#: vuexy_admin/templates/admin/login.html:18
+#: vuexy_admin/templates/registration/password_change_form.html:4
+#: vuexy_admin/templates/registration/password_reset_confirm.html:4
+#: vuexy_admin/templates/registration/password_reset_form.html:4
+msgid "Error:"
+msgstr ""
+
+#: vuexy_admin/templates/admin/auth/user/change_password.html:22
+#: vuexy_admin/templates/admin/auth/user/change_password.html:129
+#: vuexy_admin/templates/admin/auth/user/change_password.html:135
+#: vuexy_admin/templates/admin/base.html:386
+#: vuexy_admin/templates/registration/password_change_done.html:4
+#: vuexy_admin/templates/registration/password_change_form.html:7
+msgid "Change password"
+msgstr ""
+
+#: vuexy_admin/templates/admin/auth/user/change_password.html:22
+#: vuexy_admin/templates/admin/auth/user/change_password.html:129
+msgid "Set password"
+msgstr ""
+
+#: vuexy_admin/templates/admin/auth/user/change_password.html:38
+#: vuexy_admin/templates/admin/change_form.html:42
+#: vuexy_admin/templates/admin/change_list.html:47
+#: vuexy_admin/templates/registration/password_change_form.html:27
+msgid "Please correct the error below."
+msgid_plural "Please correct the errors below."
+msgstr[0] ""
+msgstr[1] ""
+
+#: vuexy_admin/templates/admin/auth/user/change_password.html:52
+msgid "Password-based authentication"
+msgstr ""
+
+#: vuexy_admin/templates/admin/auth/user/change_password.html:56
+#, python-format
+msgid ""
+"\n"
+"              Enter a new password for the user <strong>%(username)s</"
+"strong>.\n"
+"            "
+msgstr ""
+
+#: vuexy_admin/templates/admin/auth/user/change_password.html:63
+msgid ""
+"This action will <strong>enable</strong> password-based authentication for "
+"this user."
+msgstr ""
+
+#: vuexy_admin/templates/admin/auth/user/change_password.html:89
+msgid "New password"
+msgstr ""
+
+#: vuexy_admin/templates/admin/auth/user/change_password.html:138
+msgid "Disable password-based authentication"
+msgstr ""
+
+#: vuexy_admin/templates/admin/auth/user/change_password.html:142
+msgid "Enable password-based authentication"
+msgstr ""
+
+#: vuexy_admin/templates/admin/auth/user/change_password.html:147
+msgid "Back to user"
+msgstr ""
+
+#: vuexy_admin/templates/admin/base.html:22
+#: vuexy_admin/templates/admin/base.html:503
+#: vuexy_admin/templates/admin/base_site.html:7
+#: vuexy_admin/templates/admin/login.html:18
+msgid "Django Administration"
+msgstr ""
+
+#: vuexy_admin/templates/admin/base.html:240
+msgid "No applications"
+msgstr ""
+
+#: vuexy_admin/templates/admin/base.html:279
+msgid "Language"
+msgstr ""
+
+#: vuexy_admin/templates/admin/base.html:312
+msgid "Light"
+msgstr ""
+
+#: vuexy_admin/templates/admin/base.html:317
+msgid "Dark"
+msgstr ""
+
+#: vuexy_admin/templates/admin/base.html:336
+msgid "View site"
+msgstr ""
+
+#: vuexy_admin/templates/admin/base.html:374
+msgid "Superuser"
+msgstr ""
+
+#: vuexy_admin/templates/admin/base.html:374
+msgid "Staff"
+msgstr ""
+
+#: vuexy_admin/templates/admin/base.html:402
+#: vuexy_admin/templates/registration/password_change_done.html:7
+#: vuexy_admin/templates/registration/password_change_form.html:10
+msgid "Log out"
+msgstr ""
+
+#: vuexy_admin/templates/admin/base.html:462
+#: vuexy_admin/templates/admin/submit_line.html:27
+msgid "Close"
+msgstr ""
+
+#: vuexy_admin/templates/admin/base_site.html:4
+msgid "Django site admin"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_form.html:23
+#: vuexy_admin/templates/admin/change_form.html:104
+#: vuexy_admin/templates/admin/change_list.html:69
+#: vuexy_admin/templates/admin/change_list_object_tools.html:8
+#, python-format
+msgid "Add %(name)s"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_form.html:81
+msgid "Links"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_form.html:88
+#: vuexy_admin/templates/admin/change_form_object_tools.html:5
+#: vuexy_admin/templates/admin/object_history.html:10
+msgid "History"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_form.html:92
+#: vuexy_admin/templates/admin/change_form_object_tools.html:7
+#: vuexy_admin/templates/admin/edit_inline/stacked.html:58
+#: vuexy_admin/templates/admin/edit_inline/tabular.html:74
+msgid "View on site"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_form.html:104
+msgid "Save changes"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_list.html:80
+msgid "Filter"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_list.html:90
+msgid "Hide counts"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_list.html:92
+msgid "Show counts"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_list.html:99
+msgid "Clear filters"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_list.html:131
+#: vuexy_admin/templates/admin/submit_line.html:6
+msgid "Save"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_list_results.html:15
+msgid "Remove from sorting"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_list_results.html:16
+#, python-format
+msgid "Sorting priority: %(priority_number)s"
+msgstr ""
+
+#: vuexy_admin/templates/admin/change_list_results.html:17
+msgid "Toggle sorting"
+msgstr ""
+
+#: vuexy_admin/templates/admin/color_theme_toggle.html:3
+msgid "Toggle theme (current theme: auto)"
+msgstr ""
+
+#: vuexy_admin/templates/admin/color_theme_toggle.html:4
+msgid "Toggle theme (current theme: light)"
+msgstr ""
+
+#: vuexy_admin/templates/admin/color_theme_toggle.html:5
+msgid "Toggle theme (current theme: dark)"
+msgstr ""
+
+#: vuexy_admin/templates/admin/date_hierarchy.html:5
+#, python-format
+msgid "%(field_name)s"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_confirmation.html:18
+#: vuexy_admin/templates/admin/submit_line.html:34
+msgid "Delete"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_confirmation.html:31
+msgid "Permission denied"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_confirmation.html:34
+#, python-format
+msgid ""
+"Deleting the %(object_name)s \"%(escaped_object)s\" would result in deleting "
+"related objects, but your account doesn't have permission to delete the "
+"following types of objects:"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_confirmation.html:45
+msgid "Protected object"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_confirmation.html:48
+#, python-format
+msgid ""
+"Deleting the %(object_name)s \"%(escaped_object)s\" would require deleting "
+"the following protected related objects:"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_confirmation.html:59
+msgid "Confirm deletion"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_confirmation.html:65
+#, python-format
+msgid ""
+"Are you sure you want to delete the %(object_name)s \"%(escaped_object)s\"? "
+"All of the following related items will be deleted:"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_confirmation.html:69
+#: vuexy_admin/templates/admin/delete_selected_confirmation.html:31
+msgid "Objects"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_confirmation.html:78
+msgid "Yes, delete"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_confirmation.html:82
+#: vuexy_admin/templates/admin/delete_selected_confirmation.html:43
+msgid "No, take me back"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_selected_confirmation.html:17
+msgid "Delete multiple objects"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_selected_confirmation.html:23
+#, python-format
+msgid ""
+"Deleting the selected %(objects_name)s would result in deleting related "
+"objects, but your account doesn't have permission to delete the following "
+"types of objects:"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_selected_confirmation.html:26
+#, python-format
+msgid ""
+"Deleting the selected %(objects_name)s would require deleting the following "
+"protected related objects:"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_selected_confirmation.html:29
+#, python-format
+msgid ""
+"Are you sure you want to delete the selected %(objects_name)s? All of the "
+"following objects and their related items will be deleted:"
+msgstr ""
+
+#: vuexy_admin/templates/admin/delete_selected_confirmation.html:42
+msgid "Yes, I’m sure"
+msgstr ""
+
+#: vuexy_admin/templates/admin/edit_inline/tabular.html:47
+msgid "Delete?"
+msgstr ""
+
+#: vuexy_admin/templates/admin/filter.html:5
+#, python-format
+msgid "Filter by %(filter_title)s"
+msgstr ""
+
+#: vuexy_admin/templates/admin/import_export/change_list_export_item.html:4
+msgid "Export"
+msgstr ""
+
+#: vuexy_admin/templates/admin/import_export/change_list_import_item.html:4
+msgid "Import"
+msgstr ""
+
+#: vuexy_admin/templates/admin/includes/object_delete_summary.html:4
+msgid "Summary"
+msgstr ""
+
+#: vuexy_admin/templates/admin/invalid_setup.html:12
+msgid ""
+"Something’s wrong with your database installation. Make sure the appropriate "
+"database tables have been created, and make sure the database is readable by "
+"the appropriate user."
+msgstr ""
+
+#: vuexy_admin/templates/admin/login.html:18
+#: vuexy_admin/templates/registration/password_reset_complete.html:15
+msgid "Log in"
+msgstr ""
+
+#: vuexy_admin/templates/admin/login.html:60
+msgid "SafeRoute"
+msgstr ""
+
+#: vuexy_admin/templates/admin/login.html:91
+msgid "Welcome to SafeRoute!"
+msgstr ""
+
+#: vuexy_admin/templates/admin/login.html:92
+msgid "Sign in to your admin account"
+msgstr ""
+
+#: vuexy_admin/templates/admin/login.html:98
+#, python-format
+msgid ""
+"You are authenticated as %(username)s, but are not authorized to access this "
+"page. Would you like to login to a different account?"
+msgstr ""
+
+#: vuexy_admin/templates/admin/login.html:115
+msgid ""
+"\n"
+"            Please correct the error below.\n"
+"          "
+msgid_plural ""
+"\n"
+"            Please correct the errors below.\n"
+"          "
+msgstr[0] ""
+msgstr[1] ""
+
+#: vuexy_admin/templates/admin/login.html:129
+msgid "Username"
+msgstr ""
+
+#: vuexy_admin/templates/admin/login.html:142
+msgid "Enter your username"
+msgstr ""
+
+#: vuexy_admin/templates/admin/login.html:151
+msgid "Password"
+msgstr ""
+
+#: vuexy_admin/templates/admin/login.html:179
+msgid "Remember Me"
+msgstr ""
+
+#: vuexy_admin/templates/admin/login.html:183
+msgid "Forgot Password?"
+msgstr ""
+
+#: vuexy_admin/templates/admin/login.html:190
+msgid "Sign in"
+msgstr ""
+
+#: vuexy_admin/templates/admin/login.html:196
+msgid "Theme"
+msgstr ""
+
+#: vuexy_admin/templates/admin/object_history.html:20
+msgid "Change history"
+msgstr ""
+
+#: vuexy_admin/templates/admin/object_history.html:28
+msgid "Date/time"
+msgstr ""
+
+#: vuexy_admin/templates/admin/object_history.html:30
+msgid "Action"
+msgstr ""
+
+#: vuexy_admin/templates/admin/object_history.html:79
+msgid "entry"
+msgid_plural "entries"
+msgstr[0] ""
+msgstr[1] ""
+
+#: vuexy_admin/templates/admin/object_history.html:101
+msgid ""
+"This object doesn't have a change history. It probably wasn't added via this "
+"admin site."
+msgstr ""
+
+#: vuexy_admin/templates/admin/pagination.html:8
+#: vuexy_admin/templates/admin/search_form.html:14
+msgid "Show all"
+msgstr ""
+
+#: vuexy_admin/templates/admin/pagination.html:12
+#, python-format
+msgid "Pagination %(name)s"
+msgstr ""
+
+#: vuexy_admin/templates/admin/popup_response.html:3
+msgid "Popup closing…"
+msgstr ""
+
+#: vuexy_admin/templates/admin/search_form.html:7
+#, python-format
+msgid "Search %(name)s..."
+msgstr ""
+
+#: vuexy_admin/templates/admin/search_form.html:12
+#, python-format
+msgid "%(counter)s result"
+msgid_plural "%(counter)s results"
+msgstr[0] ""
+msgstr[1] ""
+
+#: vuexy_admin/templates/admin/search_form.html:14
+#, python-format
+msgid "%(full_result_count)s total"
+msgstr ""
+
+#: vuexy_admin/templates/admin/submit_line.html:11
+msgid "Save and continue editing"
+msgstr ""
+
+#: vuexy_admin/templates/admin/submit_line.html:11
+msgid "Save and view"
+msgstr ""
+
+#: vuexy_admin/templates/admin/submit_line.html:16
+msgid "Save and add another"
+msgstr ""
+
+#: vuexy_admin/templates/admin/submit_line.html:21
+msgid "Save as new"
+msgstr ""
+
+#: vuexy_admin/templates/admin/widgets/related_widget_wrapper.html:11
+#, python-format
+msgid "Change selected %(model)s"
+msgstr ""
+
+#: vuexy_admin/templates/admin/widgets/related_widget_wrapper.html:19
+#, python-format
+msgid "Add another %(model)s"
+msgstr ""
+
+#: vuexy_admin/templates/admin/widgets/related_widget_wrapper.html:27
+#, python-format
+msgid "Delete selected %(model)s"
+msgstr ""
+
+#: vuexy_admin/templates/admin/widgets/related_widget_wrapper.html:34
+#, python-format
+msgid "View selected %(model)s"
+msgstr ""
+
+#: vuexy_admin/templates/registration/logged_out.html:7
+msgid "Logout"
+msgstr ""
+
+#: vuexy_admin/templates/registration/logged_out.html:15
+msgid "Thanks for spending some quality time with the web site today."
+msgstr ""
+
+#: vuexy_admin/templates/registration/logged_out.html:17
+msgid "Log in again"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_change_done.html:4
+#: vuexy_admin/templates/registration/password_change_form.html:7
+msgid "Documentation"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_change_done.html:14
+#: vuexy_admin/templates/registration/password_change_form.html:17
+msgid "Password change"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_change_done.html:19
+msgid "Your password was changed."
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_change_form.html:32
+msgid ""
+"Please enter your old password, for security’s sake, and then enter your new "
+"password twice so we can verify you typed it in correctly."
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_change_form.html:69
+#: vuexy_admin/templates/registration/password_reset_confirm.html:38
+msgid "Change my password"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_complete.html:7
+#: vuexy_admin/templates/registration/password_reset_done.html:7
+#: vuexy_admin/templates/registration/password_reset_form.html:9
+msgid "Password reset"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_complete.html:13
+msgid "Your password has been set.  You may go ahead and log in now."
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_confirm.html:9
+msgid "Password reset confirmation"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_confirm.html:17
+msgid ""
+"Please enter your new password twice so we can verify you typed it in "
+"correctly."
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_confirm.html:24
+msgid "New password:"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_confirm.html:31
+msgid "Confirm password:"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_confirm.html:44
+msgid ""
+"The password reset link was invalid, possibly because it has already been "
+"used.  Please request a new password reset."
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_done.html:13
+msgid ""
+"We’ve emailed you instructions for setting your password, if an account "
+"exists with the email you entered. You should receive them shortly."
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_done.html:15
+msgid ""
+"If you don’t receive an email, please make sure you’ve entered the address "
+"you registered with, and check your spam folder."
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_email.html:2
+#, python-format
+msgid ""
+"You're receiving this email because you requested a password reset for your "
+"user account at %(site_name)s."
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_email.html:8
+msgid "In case you’ve forgotten, you are:"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_form.html:15
+msgid ""
+"Forgotten your password? Enter your email address below, and we’ll email "
+"instructions for setting a new one."
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_form.html:21
+msgid "Email address:"
+msgstr ""
+
+#: vuexy_admin/templates/registration/password_reset_form.html:28
+msgid "Reset my password"
+msgstr ""
+
+#: children/models.py:44
+msgid "Pickup PIN"
+msgstr "رمز الاستلام"
+
+#: children/models.py:49
+msgid "4-6 digit code for pickup verification."
+msgstr "رمز مكون من ٤-٦ أرقام للتحقق من الاستلام"
+

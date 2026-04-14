@@ -19,4 +19,30 @@ ADMIN_ORDERING = [
             'GuardianUser',
         ]
     },
+    {
+        'app': 'children',
+        'label': _('Children'),
+        'models': [
+            'Child',
+        ]
+    },
+    {
+        'app': 'trips',
+        'label': _('Trips & Routes'),
+        'models': [
+            'Bus',
+            'Route',
+            'Trip',
+        ]
+    },
+    {
+        'app': 'notifications',
+        'label': _('Notifications'),
+        'models': [
+            'BroadcastNotification',
+            'Notification',
+            'NotificationTemplate',
+            'DeviceToken',
+        ]
+    },
 ]

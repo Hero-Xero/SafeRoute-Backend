@@ -59,8 +59,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Third-party
+    'import_export',
+
     # Local Apps
     'users',
+    'children',
+    'trips',
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -153,8 +159,11 @@ PARLER_LANGUAGES = {
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
-
 USE_TZ = True
+
+LOCALE_PATHS = [
+    BASE_DIR / 'locale',
+]
 # Custom user model
 AUTH_USER_MODEL = 'users.User'
 
@@ -215,3 +224,47 @@ STATIC_ROOT = 'staticfiles'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+# Vuexy Admin Sidebar Configuration
+SIDEBAR_CONFIG = {
+    "app_order": ["auth", "users", "children", "trips", "notifications"],
+    "apps": {
+        "auth": {
+            "name": _("Users & Permissions"),
+            "models": {
+                "Group": {"icon": "ti-lock", "order": 1},
+            },
+        },
+        "users": {
+            "name": _("Users"),
+            "models": {
+                "AdminUser": {"icon": "ti-user-cog", "order": 1},
+                "DriverUser": {"icon": "ti-steering-wheel", "order": 2},
+                "GuardianUser": {"icon": "ti-user-shield", "order": 3},
+            },
+        },
+        "children": {
+            "name": _("Children"),
+            "models": {
+                "Child": {"icon": "ti-mood-boy", "order": 1},
+            },
+        },
+        "trips": {
+            "name": _("Trips & Routes"),
+            "models": {
+                "Bus": {"icon": "ti-bus", "order": 1},
+                "Route": {"icon": "ti-route", "order": 2},
+                "Trip": {"icon": "ti-map-2", "order": 3},
+            },
+        },
+        "notifications": {
+            "name": _("Notifications"),
+            "models": {
+                "BroadcastNotification": {"icon": "ti-speakerphone", "order": 1},
+                "Notification": {"icon": "ti-bell", "order": 2},
+                "NotificationTemplate": {"icon": "ti-file-description", "order": 3},
+                "DeviceToken": {"icon": "ti-device-mobile", "order": 4},
+            },
+        },
+    },
+}

@@ -13,76 +13,138 @@
 {% block content %}
 <div class="row g-4 mt-0">
 
-  {# ── Dashboard statistics widget ───────────────────────────────────────── #}
-  <div class="row g-4 mb-4">
-    <div class="col-sm-6 col-xl-3">
-      {% include "admin/widgets/_stat_card.html" with title="Total Registered Users" value=total_users|default:"0" color="primary" icon="ti-users" trend="" subtitle="Across all roles" %}
+  {# ── 1. USERS OVERVIEW ─────────────────────────────────────────────────── #}
+  <div class="col-12 mt-4">
+    <div class="d-flex align-items-center mb-1">
+      <i class="ti ti-users ti-sm me-2 text-primary"></i>
+      <h6 class="mb-0 text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 1px;">{% trans "User Statistics" %}</h6>
     </div>
-    <div class="col-sm-6 col-xl-3">
-      {% include "admin/widgets/_stat_card.html" with title="Active Drivers" value=active_drivers|default:"0" color="success" icon="ti-steering-wheel" trend="" subtitle="Drivers with verified accounts" %}
+    <hr class="mt-1 mb-3">
+    <div class="row g-4">
+      <div class="col-sm-6 col-md-4 col-xl-3">
+        {% include "admin/widgets/_stat_card.html" with title="Total Users" value=total_users|default:"0" color="primary" icon="ti-users" subtitle="All registered accounts" %}
+      </div>
+      <div class="col-sm-6 col-md-4 col-xl-3">
+        {% include "admin/widgets/_stat_card.html" with title="Active Drivers" value=active_drivers|default:"0" icon="ti-steering-wheel" color="success" subtitle="Verified drivers" %}
+      </div>
+      <div class="col-sm-6 col-md-4 col-xl-3">
+        {% include "admin/widgets/_stat_card.html" with title="Active Guardians" value=active_guardians|default:"0" icon="ti-user-shield" color="info" subtitle="Linked to children" %}
+      </div>
+      <div class="col-sm-6 col-md-4 col-xl-3">
+        {% include "admin/widgets/_stat_card.html" with title="Unverified Users" value=unverified_users|default:"0" icon="ti-mail-opened" color="warning" subtitle="Requires verification" %}
+      </div>
     </div>
-    <div class="col-sm-6 col-xl-3">
-      {% include "admin/widgets/_stat_card.html" with title="Pending Signups" value=pending_signups|default:"0" color="warning" icon="ti-clock" trend="" subtitle="Awaiting administrative review" %}
+  </div>
+
+  {# ── 2. LOGISTICS & TRIPS ──────────────────────────────────────────────── #}
+  <div class="col-12 mt-5">
+    <div class="d-flex align-items-center mb-1">
+      <i class="ti ti-bus ti-sm me-2 text-primary"></i>
+      <h6 class="mb-0 text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 1px;">{% trans "Logistics & Trips" %}</h6>
     </div>
-    <div class="col-sm-6 col-xl-3">
-      {% include "admin/widgets/_stat_card.html" with title="Total Guardians" value=total_guardians|default:"0" color="info" icon="ti-user-shield" trend="" subtitle="Linked to students" %}
+    <hr class="mt-1 mb-3">
+    <div class="row g-4">
+      <div class="col-sm-6 col-md-4 col-xl-3">
+        {% include "admin/widgets/_stat_card.html" with title="Active Trips" value=active_trips|default:"0" icon="ti-map-2" color="success" subtitle="Currently in progress" %}
+      </div>
+      <div class="col-sm-6 col-md-4 col-xl-3">
+        {% include "admin/widgets/_stat_card.html" with title="Trips Today" value=trips_today|default:"0" icon="ti-calendar-event" color="info" subtitle="Scheduled for today" %}
+      </div>
+      <div class="col-sm-6 col-md-4 col-xl-3">
+        {% include "admin/widgets/_stat_card.html" with title="Total Routes" value=total_routes|default:"0" icon="ti-route" color="primary" subtitle="Active transportation lines" %}
+      </div>
+      <div class="col-sm-6 col-md-4 col-xl-3">
+        {% include "admin/widgets/_stat_card.html" with title="Buses on Trip" value=buses_on_trip|default:"0" icon="ti-bus" color="warning" subtitle="Currently on the road" %}
+      </div>
+    </div>
+  </div>
+
+  {# ── 3. CHILDREN & NOTIFICATIONS ───────────────────────────────────────── #}
+  <div class="col-12 mt-5">
+    <div class="d-flex align-items-center mb-1">
+      <i class="ti ti-bell-ringing ti-sm me-2 text-primary"></i>
+      <h6 class="mb-0 text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 1px;">{% trans "Children & Notifications" %}</h6>
+    </div>
+    <hr class="mt-1 mb-3">
+    <div class="row g-4">
+      <div class="col-sm-6 col-md-4 col-xl-3">
+        {% include "admin/widgets/_stat_card.html" with title="Active Children" value=active_children|default:"0" icon="ti-mood-boy" color="primary" subtitle="Students using the service" %}
+      </div>
+      <div class="col-sm-6 col-md-4 col-xl-3">
+        {% include "admin/widgets/_stat_card.html" with title="Unread Notifs" value=unread_notifications|default:"0" icon="ti-bell" color="danger" subtitle="Awaiting user action" %}
+      </div>
+      <div class="col-sm-6 col-md-4 col-xl-3">
+        {% include "admin/widgets/_stat_card.html" with title="Failed Notifs" value=failed_notifications|default:"0" icon="ti-alert-circle" color="warning" subtitle="Delivery errors" %}
+      </div>
+      <div class="col-sm-6 col-md-4 col-xl-3">
+        {% include "admin/widgets/_stat_card.html" with title="Device Tokens" value=total_device_tokens|default:"0" icon="ti-device-mobile" color="secondary" subtitle="Active push connections" %}
+      </div>
     </div>
   </div>
 
   {# ── App model cards ───────────────────────────────────────────────────── #}
-  {% for app in app_list %}
-  <div class="col-12 col-md-6 col-xl-4">
-    <div class="card h-100">
-      <div class="card-header d-flex align-items-center">
-        <div class="avatar avatar-sm me-3 flex-shrink-0">
-          <span class="avatar-initial rounded-circle bg-label-primary">
-            <i class="ti ti-layout-grid ti-sm"></i>
-          </span>
-        </div>
-        <h5 class="card-title mb-0">
-          <a href="{{ app.app_url }}" class="text-heading text-decoration-none">{{ app.name }}</a>
-        </h5>
-      </div>
-      <div class="card-body p-0">
-        <ul class="list-group list-group-flush">
-          {% for model in app.models %}
-          <li class="list-group-item d-flex align-items-center justify-content-between px-4 py-3">
-            <span class="text-body">
-              {% if model.admin_url %}
-              <a href="{{ model.admin_url }}" class="text-body text-decoration-none fw-medium">{{ model.name }}</a>
-              {% else %}
-              <span class="fw-medium">{{ model.name }}</span>
-              {% endif %}
-            </span>
-            <div class="d-flex gap-2">
-              {% if model.add_url %}
-              <a href="{{ model.add_url }}" class="btn btn-icon btn-sm btn-outline-primary rounded-pill" title="{% trans 'Add' %}">
-                <i class="ti ti-plus ti-xs"></i>
-              </a>
-              {% endif %}
-              {% if model.admin_url %}
-              <a href="{{ model.admin_url }}" class="btn btn-icon btn-sm btn-outline-secondary rounded-pill" title="{% trans 'Change' %}">
-                <i class="ti ti-list ti-xs"></i>
-              </a>
-              {% endif %}
+  <div class="col-12 mt-5">
+    <div class="d-flex align-items-center mb-1">
+      <i class="ti ti-layout-grid ti-sm me-2 text-primary"></i>
+      <h6 class="mb-0 text-uppercase text-muted fw-bold" style="font-size: 0.75rem; letter-spacing: 1px;">{% trans "Modules" %}</h6>
+    </div>
+    <hr class="mt-1 mb-3">
+    <div class="row g-4">
+      {% for app in app_list %}
+      <div class="col-12 col-md-6 col-xl-4">
+        <div class="card h-100">
+          <div class="card-header d-flex align-items-center">
+            <div class="avatar avatar-sm me-3 flex-shrink-0">
+              <span class="avatar-initial rounded-circle bg-label-primary">
+                <i class="ti ti-layout-grid ti-sm"></i>
+              </span>
             </div>
-          </li>
-          {% endfor %}
-        </ul>
+            <h5 class="card-title mb-0">
+              <a href="{{ app.app_url }}" class="text-heading text-decoration-none">{{ app.name }}</a>
+            </h5>
+          </div>
+          <div class="card-body p-0">
+            <ul class="list-group list-group-flush">
+              {% for model in app.models %}
+              <li class="list-group-item d-flex align-items-center justify-content-between px-4 py-3">
+                <span class="text-body">
+                  {% if model.admin_url %}
+                  <a href="{{ model.admin_url }}" class="text-body text-decoration-none fw-medium">{{ model.name }}</a>
+                  {% else %}
+                  <span class="fw-medium">{{ model.name }}</span>
+                  {% endif %}
+                </span>
+                <div class="d-flex gap-2">
+                  {% if model.add_url %}
+                  <a href="{{ model.add_url }}" class="btn btn-icon btn-sm btn-outline-primary rounded-pill" title="{% trans 'Add' %}">
+                    <i class="ti ti-plus ti-xs"></i>
+                  </a>
+                  {% endif %}
+                  {% if model.admin_url %}
+                  <a href="{{ model.admin_url }}" class="btn btn-icon btn-sm btn-outline-secondary rounded-pill" title="{% trans 'Change' %}">
+                    <i class="ti ti-list ti-xs"></i>
+                  </a>
+                  {% endif %}
+                </div>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
       </div>
+      {% empty %}
+      <div class="col-12">
+        <div class="alert alert-info">
+          <i class="ti ti-info-circle me-2"></i>
+          {% trans "You don't have permission to view or edit anything." %}
+        </div>
+      </div>
+      {% endfor %}
     </div>
   </div>
-  {% empty %}
-  <div class="col-12">
-    <div class="alert alert-info">
-      <i class="ti ti-info-circle me-2"></i>
-      {% trans "You don't have permission to view or edit anything." %}
-    </div>
-  </div>
-  {% endfor %}
 
   {# ── Recent actions ────────────────────────────────────────────────────── #}
-  <div class="col-12">
+  <div class="col-12 mt-5">
     <div class="card">
       <div class="card-header d-flex align-items-center justify-content-between">
         <h5 class="card-title mb-0">
