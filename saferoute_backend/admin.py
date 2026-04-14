@@ -125,103 +125,217 @@ class SafeRouteAdminSite(admin.AdminSite):
 
     def index(self, request, extra_context=None):
         """
-        Replace the default dashboard (with recent actions)
-        with custom statistics. Support date range filtering.
+        Custom dashboard with rich live statistics grouped by domain.
+        Defensive against missing tables (before migrations run).
         """
         if not request.user.is_superuser:
             return super().index(request, extra_context)
 
-        from users.models import DriverUser, GuardianUser
+        from django.db import ProgrammingError, OperationalError
+        from django.utils import timezone
+        from datetime import date
 
-        # Calculate live dynamic stats
-        total_users = User.objects.count()
-        active_drivers = DriverUser.objects.filter(is_active=True).count()
-        pending_signups = User.objects.filter(is_active=False).count()
-        total_guardians = GuardianUser.objects.count()
+        today = date.today()
+
+        # ── Users ────────────────────────────────────────────────────────────
+        try:
+            from users.models import DriverUser, GuardianUser
+            total_users = User.objects.count()
+            total_drivers = DriverUser.objects.count()
+            active_drivers = DriverUser.objects.filter(is_active=True).count()
+            total_guardians = GuardianUser.objects.count()
+            active_guardians = GuardianUser.objects.filter(
+                is_active=True).count()
+            inactive_users = User.objects.filter(is_active=False).count()
+            unverified_users = User.objects.filter(
+                is_verified=False, is_active=True).count()
+        except (ProgrammingError, OperationalError):
+            total_users = total_drivers = active_drivers = 0
+            total_guardians = active_guardians = inactive_users = unverified_users = 0
+
+        # ── Children ─────────────────────────────────────────────────────────
+        try:
+            from children.models import Child
+            total_children = Child.objects.count()
+            active_children = Child.objects.filter(is_active=True).count()
+        except (ProgrammingError, OperationalError):
+            total_children = active_children = 0
+
+        # ── Trips & Routes ───────────────────────────────────────────────────
+        try:
+            from trips.models import Bus, Route, Trip
+            from trips.enums import TripStatusChoices, BusStatusChoices
+            total_routes = Route.objects.filter(is_active=True).count()
+            total_buses = Bus.objects.count()
+            active_buses = Bus.objects.filter(is_active=True).count()
+            total_trips = Trip.objects.count()
+            trips_today = Trip.objects.filter(scheduled_date=today).count()
+            active_trips = Trip.objects.filter(
+                status=TripStatusChoices.IN_PROGRESS).count()
+            completed_trips = Trip.objects.filter(
+                status=TripStatusChoices.COMPLETED).count()
+            cancelled_trips = Trip.objects.filter(
+                status=TripStatusChoices.CANCELLED).count()
+        except (ProgrammingError, OperationalError):
+            total_routes = total_buses = active_buses = 0
+            total_trips = trips_today = active_trips = completed_trips = cancelled_trips = 0
+
+        try:
+            from trips.models import Bus
+            from trips.enums import BusStatusChoices
+            buses_on_trip = Bus.objects.filter(
+                status=BusStatusChoices.ON_TRIP).count()
+        except (ProgrammingError, OperationalError):
+            buses_on_trip = 0
+
+        # ── Notifications ────────────────────────────────────────────────────
+        try:
+            from notifications.models import Notification, BroadcastNotification, DeviceToken
+            from notifications.enums import NotificationStatusChoices
+            total_notifications = Notification.objects.count()
+            unread_notifications = Notification.objects.filter(
+                is_read=False).count()
+            failed_notifications = Notification.objects.filter(
+                status=NotificationStatusChoices.FAILED
+            ).count()
+            total_device_tokens = DeviceToken.objects.filter(
+                is_active=True).count()
+            total_broadcasts = BroadcastNotification.objects.count()
+            pending_broadcasts = BroadcastNotification.objects.filter(
+                is_sent=False).count()
+        except (ProgrammingError, OperationalError):
+            total_notifications = unread_notifications = failed_notifications = 0
+            total_device_tokens = total_broadcasts = pending_broadcasts = 0
 
         context = {
             **self.each_context(request),
-            "app_list": self.get_app_list(request),  # still show apps list
+            "app_list": self.get_app_list(request),
+            # Users
             "total_users": total_users,
+            "total_drivers": total_drivers,
             "active_drivers": active_drivers,
-            "pending_signups": pending_signups,
             "total_guardians": total_guardians,
+            "active_guardians": active_guardians,
+            "inactive_users": inactive_users,
+            "unverified_users": unverified_users,
+            # Children
+            "total_children": total_children,
+            "active_children": active_children,
+            # Trips & Routes
+            "total_routes": total_routes,
+            "total_buses": total_buses,
+            "active_buses": active_buses,
+            "buses_on_trip": buses_on_trip,
+            "total_trips": total_trips,
+            "trips_today": trips_today,
+            "active_trips": active_trips,
+            "completed_trips": completed_trips,
+            "cancelled_trips": cancelled_trips,
+            # Notifications
+            "total_notifications": total_notifications,
+            "unread_notifications": unread_notifications,
+            "failed_notifications": failed_notifications,
+            "total_device_tokens": total_device_tokens,
+            "total_broadcasts": total_broadcasts,
+            "pending_broadcasts": pending_broadcasts,
         }
         return TemplateResponse(request, "admin/index.html", context)
 
     def get_app_list(self, request, app_label=None):
         """
-        Return a sorted list of all the installed apps or a specific app if app_label is provided.
+        Return a sorted list of all the installed apps or a specific app,
+        integrating labels, ordering, and icons from SIDEBAR_CONFIG.
         """
         app_dict = self._build_app_dict(request, app_label)
+        sidebar_config = getattr(settings, "SIDEBAR_CONFIG", {})
+        config_apps = sidebar_config.get("apps", {})
+        app_order = sidebar_config.get("app_order", [])
 
-        # If a specific app is requested
+        # ── APP_LABEL CASE (Single app view) ───────────────────────────
         if app_label:
-            # Find the app config in our ordering
-            app_config = next(
-                (a for a in admin_ordering if a['app'] == app_label), None)
-
-            if app_config and app_label in app_dict:
-                app_data = app_dict[app_label]
-
-                # Apply custom label if specified
-                if 'label' in app_config:
-                    app_data['name'] = app_config['label']
-
-                # Order models according to our config
-                ordered_models = []
-                model_dict = {m['object_name']: m for m in app_data['models']}
-
-                for model_name in app_config.get('models', []):
-                    if model_name in model_dict:
-                        ordered_models.append(model_dict[model_name])
-
-                # Add remaining models not in our ordering config
-                remaining_models = [
-                    m for m in app_data['models']
-                    if m['object_name'] not in app_config.get('models', [])
-                ]
-
-                app_data['models'] = ordered_models + remaining_models
-                return [app_data]
-
-            return [app_dict[app_label]] if app_label in app_dict else []
-
-        # Full apps list case (no app_label specified)
-        ordered_apps = []
-
-        for app_config in admin_ordering:
-            app_label = app_config['app']
-
             if app_label in app_dict:
                 app_data = app_dict[app_label]
-
-                if 'label' in app_config:
-                    app_data['name'] = app_config['label']
-
-                # Order models
+                app_cfg = config_apps.get(app_label, {})
+                
+                # Apply custom app name
+                if "name" in app_cfg:
+                    app_data["name"] = app_cfg["name"]
+                
+                # Apply model icons and ordering
+                model_cfgs = app_cfg.get("models", {})
                 ordered_models = []
-                model_dict = {m['object_name']: m for m in app_data['models']}
+                model_dict = {m["object_name"]: m for m in app_data["models"]}
 
-                for model_name in app_config.get('models', []):
-                    if model_name in model_dict:
-                        ordered_models.append(model_dict[model_name])
+                # Order based on 'order' key in model config
+                sorted_model_names = sorted(
+                    model_cfgs.keys(), 
+                    key=lambda k: model_cfgs[k].get("order", 999)
+                )
 
-                remaining_models = [
-                    m for m in app_data['models']
-                    if m['object_name'] not in app_config.get('models', [])
-                ]
+                for m_name in sorted_model_names:
+                    if m_name in model_dict:
+                        model_data = model_dict[m_name]
+                        model_data["icon"] = model_cfgs[m_name].get("icon", "ti-circle")
+                        ordered_models.append(model_data)
 
-                app_data['models'] = ordered_models + remaining_models
+                # Add remaining models not in config
+                for m_name, m_data in model_dict.items():
+                    if m_name not in model_cfgs:
+                        m_data["icon"] = "ti-circle"
+                        ordered_models.append(m_data)
+
+                app_data["models"] = ordered_models
+                return [app_data]
+            return []
+
+        # ── FULL LIST CASE ─────────────────────────────────────────────
+        ordered_apps = []
+
+        # 1. Apps specified in app_order
+        for label in app_order:
+            if label in app_dict:
+                app_data = app_dict.pop(label)
+                app_cfg = config_apps.get(label, {})
+
+                if "name" in app_cfg:
+                    app_data["name"] = app_cfg["name"]
+                
+                # App-level icon if needed (some themes support app icons)
+                app_data["icon"] = app_cfg.get("icon", "ti-folder")
+
+                # Process models for this app
+                model_cfgs = app_cfg.get("models", {})
+                ordered_models = []
+                model_dict = {m["object_name"]: m for m in app_data["models"]}
+
+                # Order models by config 'order'
+                sorted_model_names = sorted(
+                    model_cfgs.keys(), 
+                    key=lambda k: model_cfgs[k].get("order", 999)
+                )
+
+                for m_name in sorted_model_names:
+                    if m_name in model_dict:
+                        model_data = model_dict[m_name]
+                        model_data["icon"] = model_cfgs[m_name].get("icon", "ti-circle")
+                        ordered_models.append(model_data)
+
+                # Add extra models
+                for m_name, m_data in model_dict.items():
+                    if m_name not in model_cfgs:
+                        m_data["icon"] = "ti-circle"
+                        ordered_models.append(m_data)
+
+                app_data["models"] = ordered_models
                 ordered_apps.append(app_data)
 
-        # Add remaining apps not in our ordering config
-        remaining_apps = [
-            app_data for label, app_data in app_dict.items()
-            if label not in [a['app'] for a in admin_ordering]
-        ]
+        # 2. Add remaining apps not in app_order
+        for label, app_data in sorted(app_dict.items()):
+            for m_data in app_data["models"]:
+                m_data["icon"] = "ti-circle"
+            ordered_apps.append(app_data)
 
-        return ordered_apps + remaining_apps
+        return ordered_apps
 
     def has_permission(self, request):
         """
