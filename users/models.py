@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 
 from users.enums import GenderChoices, UserTypeChoices
-from users.managers import DriverManager, GuardianManager, AdminUserManager
+from users.managers import DriverManager, GuardianManager, AdminUserManager, AssistantManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -97,4 +97,20 @@ class GuardianUser(User):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.type = UserTypeChoices.GUARDIAN
+        return super().save(*args, **kwargs)
+    
+class AssistantUser(User):
+    objects = AssistantManager()
+
+    class Meta:
+        proxy = True
+        permissions = [
+            ("can_act_as_assistant", "Can act as assistant"),
+        ]
+        verbose_name = _('Assistant User')
+        verbose_name_plural = _('Assistant Users')
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.type = UserTypeChoices.ASSISTANT
         return super().save(*args, **kwargs)

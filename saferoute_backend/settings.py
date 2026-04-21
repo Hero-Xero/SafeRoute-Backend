@@ -51,6 +51,8 @@ CORS_ALLOW_METHODS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'channels',
     'vuexy_admin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -99,6 +101,20 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'saferoute_backend.wsgi.application'
+ASGI_APPLICATION = 'saferoute_backend.asgi.application'
+
+# Redis settings
+REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+REDIS_PORT = os.getenv("REDIS_PORT", "6379")
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [(REDIS_HOST, REDIS_PORT)],
+        },
+    },
+}
 
 
 # Database
@@ -167,9 +183,6 @@ LOCALE_PATHS = [
 # Custom user model
 AUTH_USER_MODEL = 'users.User'
 
-# Redis settings
-REDIS_HOST = os.getenv("REDIS_HOST", "redis")
-REDIS_PORT = os.getenv("REDIS_PORT", "6379")
 
 # Setting up redis as the main cache for the app
 CACHES = {
@@ -240,7 +253,8 @@ SIDEBAR_CONFIG = {
             "models": {
                 "AdminUser": {"icon": "ti-user-cog", "order": 1},
                 "DriverUser": {"icon": "ti-steering-wheel", "order": 2},
-                "GuardianUser": {"icon": "ti-user-shield", "order": 3},
+                "AssistantUser": {"icon": "ti-user-plus", "order": 3},
+                "GuardianUser": {"icon": "ti-user-shield", "order": 4},
             },
         },
         "children": {

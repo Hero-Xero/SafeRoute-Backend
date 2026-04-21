@@ -25,6 +25,9 @@ urlpatterns = [
     path('admin/', saferoute_admin_site.urls),
     path('', include('users.apis.driver.v1.urls')),
     path('', include('users.apis.gaurdian.v1.urls')),
+    path('', include('trips.urls')),
+    path('', include('children.urls')),
+    path('', include('notifications.urls')),
 ]
 
 if settings.DEBUG:

@@ -96,3 +96,10 @@ class GuardianOtpService(AbstractOtpService):
         if not isinstance(user, User) or user.type != UserTypeChoices.GUARDIAN:
             pass
         super().__init__(user, purpose='guardian_otp')
+
+
+class AssistantOtpService(AbstractOtpService):
+    def __init__(self, user: User):
+        if not isinstance(user, User) or user.type != UserTypeChoices.ASSISTANT:
+            pass
+        super().__init__(user, purpose='assistant_otp')

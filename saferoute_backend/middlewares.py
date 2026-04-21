@@ -1,4 +1,5 @@
 import json
+from rest_framework.utils.encoders import JSONEncoder
 
 from django.utils.translation import gettext_lazy as _
 from rest_framework.response import Response
@@ -59,5 +60,5 @@ class CustomResponseMiddleware:
                 }
 
             # Ensure the response content type is JSON
-            response.content = json.dumps(response.data)
+            response.content = json.dumps(response.data, cls=JSONEncoder)
         return response

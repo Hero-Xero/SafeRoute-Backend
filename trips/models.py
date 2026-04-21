@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 
-from users.models import DriverUser
+from users.models import DriverUser, AssistantUser
 from children.models import Child
 from trips.enums import (
     TripStatusChoices, TripTypeChoices,
@@ -161,7 +161,8 @@ class Trip(models.Model):
         DriverUser,
         on_delete=models.SET_NULL,
         null=True, blank=True,
-        related_name='trips',
+        related_name='driven_trips',
+        related_query_name='driven_trip',
         verbose_name=_('Driver')
     )
     bus = models.ForeignKey(
@@ -170,6 +171,14 @@ class Trip(models.Model):
         null=True, blank=True,
         related_name='trips',
         verbose_name=_('Bus')
+    )
+    assistant = models.ForeignKey(
+        AssistantUser,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='assisted_trips',
+        related_query_name='assisted_trip',
+        verbose_name=_('Assistant')
     )
     scheduled_date = models.DateField(_('Scheduled Date'))
     start_time = models.DateTimeField(_('Actual Start Time'), blank=True, null=True)
