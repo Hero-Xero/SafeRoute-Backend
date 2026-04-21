@@ -9,6 +9,7 @@ services:
     build:
       context: .
       dockerfile: docker/development/Dockerfile
+    restart: always
     ports:
       - "127.0.0.1:8001:8000"
     volumes:
