@@ -8,6 +8,7 @@ urlpatterns = [
          name='token-refresh-api-view'),
     
     # Guardian and Driver 
-    path('', include('users.apis.Gaurdian.urls')),
-    path('', include('users.apis.Driver.urls')),
+    path('', include('users.apis.gaurdian.urls')),
+    path('', include('users.apis.driver.urls')),
+    path('', include('users.apis.assistant.urls')),
 ]

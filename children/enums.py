@@ -22,3 +22,17 @@ class GradeChoices(models.TextChoices):
 class ChildGenderChoices(models.TextChoices):
     MALE = 'MALE', _('Male')
     FEMALE = 'FEMALE', _('Female')
+
+
+class LocationChangeStatus(models.TextChoices):
+    PENDING_REVIEW = 'pending_review', _('Pending Review')
+    ACCEPTED = 'accepted', _('Accepted')
+    REJECTED = 'rejected', _('Rejected')
+    FULFILLED = 'fulfilled', _('Fulfilled')
+    CANCELLED = 'cancelled', _('Cancelled')
+
+
+class LocationChangeType(models.TextChoices):
+    PICKUP = 'pickup', _('Pickup')
+    DROPOFF = 'dropoff', _('Drop-off')
+    BOTH = 'both', _('Both')

@@ -42,3 +42,10 @@ class GuardianManager(models.Manager):
     def create(self, **kwargs):
         kwargs.update({'type': UserTypeChoices.GUARDIAN})
         return super().create(**kwargs)
+class AssistantManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        return super().get_queryset(*args, **kwargs).filter(type=UserTypeChoices.ASSISTANT)
+
+    def create(self, **kwargs):
+        kwargs.update({'type': UserTypeChoices.ASSISTANT})
+        return super().create(**kwargs)

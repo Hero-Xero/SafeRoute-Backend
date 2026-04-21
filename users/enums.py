@@ -6,6 +6,7 @@ class UserTypeChoices(models.TextChoices):
     ADMIN = 'ADMIN', _('Admin')
     DRIVER = 'DRIVER', _('Driver')
     GUARDIAN = 'GUARDIAN', _('Guardian')
+    ASSISTANT = 'ASSISTANT', _('Assistant')
 
 
 class GenderChoices(models.TextChoices):

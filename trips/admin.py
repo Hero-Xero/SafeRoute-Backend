@@ -10,7 +10,7 @@ from trips.models import (
     Bus, Route, RouteStop, RouteChild, Trip, TripChild
 )
 from trips.enums import TripStatusChoices, TripTypeChoices, BusStatusChoices
-from users.models import DriverUser
+from users.models import DriverUser, AssistantUser
 
 
 # ─── Resources ──────────────────────────────────────────────────────────────────
@@ -80,13 +80,18 @@ class TripResource(resources.ModelResource):
         attribute='bus',
         widget=ForeignKeyWidget(Bus, field='plate_number')
     )
+    assistant_email = fields.Field(
+        column_name='assistant_email',
+        attribute='assistant',
+        widget=ForeignKeyWidget(AssistantUser, field='email')
+    )
 
     class Meta:
         model = Trip
         fields = (
             'id', 'route_name', 'trip_type', 'status',
-            'driver_email', 'bus_plate', 'scheduled_date',
-            'start_time', 'end_time', 'notes', 'created_at'
+            'driver_email', 'bus_plate', 'assistant_email',
+            'scheduled_date', 'start_time', 'end_time', 'notes', 'created_at'
         )
         export_order = fields
         import_id_fields = ['id']
@@ -172,7 +177,7 @@ class TripAdmin(ImportExportModelAdmin):
     resource_classes = [TripResource]
 
     list_display = (
-        'route', 'trip_type', 'status_badge', 'driver', 'bus',
+        'route', 'trip_type', 'status_badge', 'driver', 'bus', 'assistant',
         'scheduled_date', 'start_time', 'end_time'
     )
     list_filter = ('status', 'trip_type', 'scheduled_date')
@@ -181,7 +186,7 @@ class TripAdmin(ImportExportModelAdmin):
     )
     readonly_fields = ('created_at', 'updated_at')
     date_hierarchy = 'scheduled_date'
-    autocomplete_fields = ['route', 'driver', 'bus']
+    autocomplete_fields = ['route', 'driver', 'bus', 'assistant']
     inlines = [TripChildInline]
 
     fieldsets = (
@@ -189,7 +194,7 @@ class TripAdmin(ImportExportModelAdmin):
             'fields': ('route', 'trip_type', 'status', 'scheduled_date')
         }),
         (_('Assigned Resources'), {
-            'fields': ('driver', 'bus')
+            'fields': ('driver', 'bus', 'assistant')
         }),
         (_('Timing'), {
             'fields': ('start_time', 'end_time')
