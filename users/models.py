@@ -31,6 +31,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         _('Email address'), unique=True, db_index=True)
     phone_number = PhoneNumberField(
         _('Mobile Number'), db_index=True)
+    secondary_phone = PhoneNumberField(
+        _('Secondary Mobile Number'), blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []

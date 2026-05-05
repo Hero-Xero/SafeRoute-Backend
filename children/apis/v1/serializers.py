@@ -66,3 +66,23 @@ class LocationChangeRequestSerializer(serializers.ModelSerializer):
             )
         
         return data
+
+
+class AbsenceRequestSerializer(serializers.Serializer):
+    student_ids = serializers.ListField(
+        child=serializers.IntegerField(), required=True
+    )
+    date = serializers.DateField(required=True)
+    notes = serializers.CharField(required=False, allow_blank=True)
+
+
+class GuardianMessageSerializer(serializers.ModelSerializer):
+    studentId = serializers.PrimaryKeyRelatedField(
+        source='student', queryset=Child.objects.all()
+    )
+
+    class Meta:
+        from children.models import GuardianMessage
+        model = GuardianMessage
+        fields = ['id', 'studentId', 'content', 'created_at']
+        read_only_fields = ['id', 'created_at']

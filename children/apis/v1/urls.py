@@ -13,4 +13,7 @@ urlpatterns = [
     
     # Absence
     path('api/v1/absence', views.AbsenceAPIView.as_view(), name='student-absence'),
+
+    # Messages
+    path('api/v1/guardian/messages', views.GuardianMessageAPIView.as_view(), name='guardian-messages'),
 ]

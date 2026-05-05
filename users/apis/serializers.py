@@ -112,3 +112,25 @@ class RefreshTokenSerializer(serializers.Serializer):
         to_repr.update({'access_token': self.access_token})
 
         return to_repr
+
+
+class ChildSimpleSerializer(serializers.ModelSerializer):
+    class Meta:
+        from children.models import Child
+        model = Child
+        fields = ['id', 'first_name', 'last_name', 'grade', 'profile_image']
+
+
+class GuardianProfileSerializer(serializers.ModelSerializer):
+    children = ChildSimpleSerializer(many=True, read_only=True)
+    primaryPhone = serializers.CharField(source='phone_number')
+    secondaryPhone = serializers.CharField(source='secondary_phone')
+    name = serializers.SerializerMethodField()
+
+    class Meta:
+        from users.models import GuardianUser
+        model = GuardianUser
+        fields = ['id', 'email', 'name', 'primaryPhone', 'secondaryPhone', 'children']
+
+    def get_name(self, obj):
+        return f"{obj.first_name or ''} {obj.last_name or ''}".strip()

@@ -21,3 +21,14 @@ class DeviceTokenSerializer(serializers.ModelSerializer):
             }
         )
         return device_token
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        from notifications.models import Notification
+        model = Notification
+        fields = [
+            'id', 'type', 'channel', 'status', 'title', 'body', 
+            'data', 'is_read', 'read_at', 'sent_at', 'created_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'sent_at']

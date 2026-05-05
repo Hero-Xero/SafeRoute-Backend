@@ -7,7 +7,7 @@ from import_export.widgets import ForeignKeyWidget
 
 from saferoute_backend.admin import saferoute_admin_site
 from trips.models import (
-    Bus, Route, RouteStop, RouteChild, Trip, TripChild
+    Bus, Route, RouteStop, RouteChild, Trip, TripChild, School
 )
 from trips.enums import TripStatusChoices, TripTypeChoices, BusStatusChoices
 from users.models import DriverUser, AssistantUser
@@ -227,6 +227,11 @@ class TripAdmin(ImportExportModelAdmin):
     status_badge.short_description = _('Status')
 
 
+class SchoolAdmin(admin.ModelAdmin):
+    list_display = ('name', 'latitude', 'longitude', 'is_active')
+    search_fields = ('name',)
+
 saferoute_admin_site.register(Bus, BusAdmin)
 saferoute_admin_site.register(Route, RouteAdmin)
 saferoute_admin_site.register(Trip, TripAdmin)
+saferoute_admin_site.register(School, SchoolAdmin)

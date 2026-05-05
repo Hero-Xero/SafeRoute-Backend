@@ -13,4 +13,7 @@ urlpatterns = [
     path('api/v1/routes/students', views.RouteStudentsAPIView.as_view(), name='route-students-list'),
     path('api/v1/students/<int:student_id>/boarded', views.StudentActionAPIView.as_view(), {'action': 'boarded'}, name='student-boarded'),
     path('api/v1/students/<int:student_id>/dropped-off', views.StudentActionAPIView.as_view(), {'action': 'dropped-off'}, name='student-dropped-off'),
+    
+    # School
+    path('api/v1/school/location', views.SchoolLocationAPIView.as_view(), name='school-location'),
 ]

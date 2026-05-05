@@ -13,4 +13,6 @@ urlpatterns = [
          views.SetNewPasswordView.as_view(), name='guardian-auth-change-password'),
     path('api/v1/guardian/auth/set-initial-password',
          views.SetInitialPasswordView.as_view(), name='guardian-auth-set-initial-password'),
+    path('api/v1/guardian/profile',
+         views.GuardianProfileAPIView.as_view(), name='guardian-profile'),
 ]
