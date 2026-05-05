@@ -155,11 +155,16 @@ class SafeRouteAdminSite(admin.AdminSite):
 
         # ── Children ─────────────────────────────────────────────────────────
         try:
-            from children.models import Child
+            from children.models import Child, StudentAbsence, LocationChangeRequest
             total_children = Child.objects.count()
             active_children = Child.objects.filter(is_active=True).count()
+            total_absences = StudentAbsence.objects.count()
+            absences_today = StudentAbsence.objects.filter(date=timezone.now().date()).count()
+            pending_location_changes = LocationChangeRequest.objects.filter(status='PENDING_REVIEW').count()
         except (ProgrammingError, OperationalError):
             total_children = active_children = 0
+            total_absences = absences_today = 0
+            pending_location_changes = 0
 
         # ── Trips & Routes ───────────────────────────────────────────────────
         try:
@@ -221,6 +226,9 @@ class SafeRouteAdminSite(admin.AdminSite):
             # Children
             "total_children": total_children,
             "active_children": active_children,
+            "total_absences": total_absences,
+            "absences_today": absences_today,
+            "pending_location_changes": pending_location_changes,
             # Trips & Routes
             "total_routes": total_routes,
             "total_buses": total_buses,

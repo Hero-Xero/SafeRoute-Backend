@@ -1,4 +1,5 @@
 from rest_framework import status, permissions
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.utils import timezone
@@ -42,18 +43,13 @@ class CurrentTripAPIView(APIView):
             ).first()
 
         if not trip:
-            return Response({
-                "success": True,
-                "message": _("No active trip found."),
-                "data": {"tripActive": False}
-            })
+            return Response({"tripActive": False, "message": _("No active trip found.")})
 
         serializer = TripDetailsSerializer(trip)
-        return Response({
-            "success": True,
-            "message": _("Active trip found."),
-            "data": serializer.data
-        })
+        data = serializer.data
+        data["tripActive"] = True
+        data["message"] = _("Active trip found.")
+        return Response(data)
 
 
 class TripLifecycleAPIView(APIView):
@@ -145,7 +141,7 @@ class TripLocationAPIView(APIView):
 
         # TODO: Trigger socket event 'trip:location' here
 
-        return Response({"success": True, "message": _("Location updated.")})
+        return Response({"message": _("Location updated.")})
 
 
 class RouteStudentsAPIView(APIView):
@@ -223,4 +219,41 @@ class StudentActionAPIView(APIView):
         # TODO: Send FCM notification to parents
         # TODO: Emit socket event 'student-bus-status'
 
-        return Response({"success": True, "message": f"Student marked as {action}."})
+        return Response({"message": _(f"Student marked as {action}.")})
+
+
+class SchoolLocationAPIView(APIView):
+    """
+    B7. GET /api/v1/school/location
+    Returns the school's name and Google Maps URL.
+    """
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        from trips.models import School
+        school = School.objects.filter(is_active=True).first()
+        
+        if school:
+            gmaps_url = school.gmaps_url or f"https://www.google.com/maps/search/?api=1&query={school.latitude},{school.longitude}"
+            return Response({
+                "name": school.name,
+                "gMapsUrl": gmaps_url,
+                "latitude": school.latitude,
+                "longitude": school.longitude
+            })
+
+        # Fallback to Route logic if no global school is defined (for backward compatibility)
+        route = Route.objects.filter(is_active=True).first()
+        if not route:
+            return Response({
+                "name": "SafeRoute School",
+                "gMapsUrl": "https://www.google.com/maps/search/?api=1&query=24.7136,46.6753"
+            })
+        
+        gmaps_url = f"https://www.google.com/maps/search/?api=1&query={route.school_latitude},{route.school_longitude}"
+        return Response({
+            "name": route.school_name or "SafeRoute School",
+            "gMapsUrl": gmaps_url,
+            "latitude": route.school_latitude,
+            "longitude": route.school_longitude
+        })

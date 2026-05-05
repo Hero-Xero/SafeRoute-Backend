@@ -5,7 +5,7 @@ from import_export.admin import ImportExportModelAdmin
 from import_export.widgets import ForeignKeyWidget
 
 from saferoute_backend.admin import saferoute_admin_site
-from children.models import Child
+from children.models import Child, StudentAbsence, LocationChangeRequest, StudentSavedLocation
 from users.models import GuardianUser
 
 
@@ -68,4 +68,27 @@ class ChildAdmin(ImportExportModelAdmin):
     full_name.short_description = _('Full Name')
 
 
+class StudentAbsenceAdmin(admin.ModelAdmin):
+    list_display = ('student', 'date', 'created_at')
+    list_filter = ('date', 'student__grade')
+    search_fields = ('student__first_name', 'student__last_name', 'student__student_id')
+    autocomplete_fields = ['student']
+
+
+class StudentSavedLocationAdmin(admin.ModelAdmin):
+    list_display = ('description', 'guardian', 'is_active', 'created_at')
+    list_filter = ('is_active', 'guardian')
+    search_fields = ('description', 'guardian__first_name', 'guardian__last_name', 'guardian__email')
+
+
+class LocationChangeRequestAdmin(admin.ModelAdmin):
+    list_display = ('guardian', 'target_date', 'status', 'change_type', 'created_at')
+    list_filter = ('status', 'target_date', 'change_type')
+    search_fields = ('guardian__first_name', 'guardian__last_name', 'guardian__email')
+    autocomplete_fields = ['guardian', 'students', 'new_location']
+
+
 saferoute_admin_site.register(Child, ChildAdmin)
+saferoute_admin_site.register(StudentAbsence, StudentAbsenceAdmin)
+saferoute_admin_site.register(LocationChangeRequest, LocationChangeRequestAdmin)
+saferoute_admin_site.register(StudentSavedLocation, StudentSavedLocationAdmin)

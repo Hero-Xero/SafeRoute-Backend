@@ -71,13 +71,13 @@
         {% include "admin/widgets/_stat_card.html" with title="Active Children" value=active_children|default:"0" icon="ti-mood-boy" color="primary" subtitle="Students using the service" %}
       </div>
       <div class="col-sm-6 col-md-4 col-xl-3">
-        {% include "admin/widgets/_stat_card.html" with title="Unread Notifs" value=unread_notifications|default:"0" icon="ti-bell" color="danger" subtitle="Awaiting user action" %}
+        {% include "admin/widgets/_stat_card.html" with title="Absences Today" value=absences_today|default:"0" icon="ti-user-off" color="danger" subtitle="Marked as absent" %}
       </div>
       <div class="col-sm-6 col-md-4 col-xl-3">
-        {% include "admin/widgets/_stat_card.html" with title="Failed Notifs" value=failed_notifications|default:"0" icon="ti-alert-circle" color="warning" subtitle="Delivery errors" %}
+        {% include "admin/widgets/_stat_card.html" with title="Pending Changes" value=pending_location_changes|default:"0" icon="ti-map-pin" color="warning" subtitle="Location requests" %}
       </div>
       <div class="col-sm-6 col-md-4 col-xl-3">
-        {% include "admin/widgets/_stat_card.html" with title="Device Tokens" value=total_device_tokens|default:"0" icon="ti-device-mobile" color="secondary" subtitle="Active push connections" %}
+        {% include "admin/widgets/_stat_card.html" with title="Unread Notifs" value=unread_notifications|default:"0" icon="ti-bell" color="info" subtitle="Awaiting user action" %}
       </div>
     </div>
   </div>

@@ -138,3 +138,45 @@ class LocationChangeRequest(models.Model):
 
     def __str__(self):
         return f"Request {self.id} - {self.guardian} [{self.get_status_display()}]"
+
+
+class StudentAbsence(models.Model):
+    """Absence records for students on specific dates."""
+    student = models.ForeignKey(
+        Child,
+        on_delete=models.CASCADE,
+        related_name='absences',
+        verbose_name=_('Student')
+    )
+    date = models.DateField(_('Date'))
+    notes = models.TextField(_('Notes'), blank=True, null=True)
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+    updated_at = models.DateTimeField(_('Updated At'), auto_now=True)
+
+    class Meta:
+        verbose_name = _('Student Absence')
+        verbose_name_plural = _('Student Absences')
+        unique_together = ('student', 'date')
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.student} absent on {self.date}"
+
+
+class GuardianMessage(models.Model):
+    guardian = models.ForeignKey(
+        GuardianUser, on_delete=models.CASCADE, related_name='sent_messages', verbose_name=_('Guardian')
+    )
+    student = models.ForeignKey(
+        Child, on_delete=models.CASCADE, related_name='guardian_messages', verbose_name=_('Student')
+    )
+    content = models.TextField(_('Content'))
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Guardian Message')
+        verbose_name_plural = _('Guardian Messages')
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"From {self.guardian} re: {self.student}"

@@ -10,6 +10,24 @@ from trips.enums import (
 )
 
 
+class School(models.Model):
+    """Global school configuration."""
+    name = models.CharField(_('School Name'), max_length=200)
+    latitude = models.DecimalField(_('Latitude'), max_digits=10, decimal_places=7)
+    longitude = models.DecimalField(_('Longitude'), max_digits=10, decimal_places=7)
+    gmaps_url = models.URLField(_('Google Maps URL'), blank=True, null=True)
+    is_active = models.BooleanField(_('Active'), default=True)
+    created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
+    updated_at = models.DateTimeField(_('Updated At'), auto_now=True)
+
+    class Meta:
+        verbose_name = _('School')
+        verbose_name_plural = _('Schools')
+
+    def __str__(self):
+        return self.name
+
+
 class Bus(models.Model):
     """Represents a physical school bus."""
     plate_number = models.CharField(_('Plate Number'), max_length=20, unique=True)

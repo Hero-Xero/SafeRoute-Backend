@@ -10,6 +10,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from users.apis.serializers import SendOtpSerializer, VerifyOtpSerializer, ResendOtpSerializer, SetNewPasswordSerializer
 from users.models import GuardianUser
 from users.services.otp_services import GuardianOtpService
+from users.apis.serializers import GuardianProfileSerializer
 
 
 class SendOtpView(APIView):
@@ -41,7 +42,7 @@ class SendOtpView(APIView):
         otp, created, remaining_time = otp_service.generate_or_get_otp()
 
         return Response({
-            "detail": _("OTP has been sent to your email."),
+            "message": _("OTP has been sent to your email."),
             "remaining_time": remaining_time,
         }, status=status.HTTP_200_OK)
 
@@ -74,7 +75,7 @@ class VerifyOtpView(APIView):
                 token_generator = PasswordResetTokenGenerator()
                 reset_token = token_generator.make_token(user)
                 return Response({
-                    "detail": _("OTP verified. Please set your password."),
+                    "message": _("OTP verified. Please set your password."),
                     "requires_password_reset": True,
                     "reset_token": reset_token,
                     "email": user.email
@@ -111,7 +112,7 @@ class ResendOtpView(APIView):
             force=True)
 
         return Response({
-            "detail": _("A new OTP has been sent to your email."),
+            "message": _("A new OTP has been sent to your email."),
             "remaining_time": remaining_time,
         }, status=status.HTTP_200_OK)
 
@@ -136,7 +137,7 @@ class SetNewPasswordView(APIView):
         user.set_password(serializer.validated_data['new_password'])
         user.save()
 
-        return Response({"detail": _("Password has been changed successfully.")}, status=status.HTTP_200_OK)
+        return Response({"message": _("Password has been changed successfully.")}, status=status.HTTP_200_OK)
 
 
 class SetInitialPasswordView(APIView):
@@ -174,7 +175,23 @@ class SetInitialPasswordView(APIView):
 
         refresh = RefreshToken.for_user(user)
         return Response({
-            'detail': _("Password set successfully. Login successful."),
+            'message': _("Password set successfully. Login successful."),
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }, status=status.HTTP_200_OK)
+
+
+class GuardianProfileAPIView(APIView):
+    """
+    E3. GET /api/v1/guardian/profile
+    Returns the guardian's profile information.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        if user.type != 'GUARDIAN':
+            return Response({"detail": _("Unauthorized.")}, status=status.HTTP_403_FORBIDDEN)
+        
+        serializer = GuardianProfileSerializer(user)
+        return Response(serializer.data)

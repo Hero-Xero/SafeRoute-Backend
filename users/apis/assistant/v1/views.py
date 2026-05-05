@@ -29,7 +29,7 @@ class AssistantSendOtpView(APIView):
         if getattr(user, 'is_verified', False):
             refresh = RefreshToken.for_user(user)
             return Response({
-                'detail': _("Login successful."),
+                'message': _("Login successful."),
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
             }, status=status.HTTP_200_OK)
@@ -38,7 +38,7 @@ class AssistantSendOtpView(APIView):
         otp, created, remaining_time = otp_service.generate_or_get_otp()
 
         return Response({
-            "detail": _("OTP has been sent to your email."),
+            "message": _("OTP has been sent to your email."),
             "remaining_time": remaining_time,
         }, status=status.HTTP_200_OK)
 
@@ -65,7 +65,7 @@ class AssistantVerifyOtpView(APIView):
                 token_generator = PasswordResetTokenGenerator()
                 reset_token = token_generator.make_token(user)
                 return Response({
-                    "detail": _("OTP verified. Please set your password."),
+                    "message": _("OTP verified. Please set your password."),
                     "requires_password_reset": True,
                     "reset_token": reset_token,
                     "email": user.email
@@ -96,7 +96,7 @@ class AssistantResendOtpView(APIView):
         otp, created, remaining_time = otp_service.generate_or_get_otp(force=True)
 
         return Response({
-            "detail": _("A new OTP has been sent to your email."),
+            "message": _("A new OTP has been sent to your email."),
             "remaining_time": remaining_time,
         }, status=status.HTTP_200_OK)
 
@@ -128,7 +128,7 @@ class AssistantSetInitialPasswordView(APIView):
 
         refresh = RefreshToken.for_user(user)
         return Response({
-            'detail': _("Password set successfully. Login successful."),
+            'message': _("Password set successfully. Login successful."),
             'refresh': str(refresh),
             'access': str(refresh.access_token),
         }, status=status.HTTP_200_OK)
@@ -151,4 +151,4 @@ class AssistantChangePasswordView(APIView):
         user.set_password(serializer.validated_data['new_password'])
         user.save()
 
-        return Response({"detail": _("Password has been changed successfully.")}, status=status.HTTP_200_OK)
+        return Response({"message": _("Password has been changed successfully.")}, status=status.HTTP_200_OK)

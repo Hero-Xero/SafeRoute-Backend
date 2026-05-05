@@ -261,6 +261,8 @@ SIDEBAR_CONFIG = {
             "name": _("Children"),
             "models": {
                 "Child": {"icon": "ti-mood-boy", "order": 1},
+                "StudentAbsence": {"icon": "ti-user-minus", "order": 2},
+                "LocationChangeRequest": {"icon": "ti-map-pin", "order": 3},
             },
         },
         "trips": {
