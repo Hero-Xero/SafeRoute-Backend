@@ -139,7 +139,18 @@ class TripLocationAPIView(APIView):
         trip.current_longitude = coords[1]
         trip.save()
 
-        # TODO: Trigger socket event 'trip:location' here
+        from channels.layers import get_channel_layer
+        from asgiref.sync import async_to_sync
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'trip_{trip.id}',
+            {
+                'type': 'trip_location_update',
+                'data': {
+                    'currentCoords': coords
+                }
+            }
+        )
 
         return Response({"message": _("Location updated.")})
 
@@ -216,8 +227,21 @@ class StudentActionAPIView(APIView):
 
         trip_child.save()
 
+        from channels.layers import get_channel_layer
+        from asgiref.sync import async_to_sync
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(
+            f'trip_{trip_child.trip.id}',
+            {
+                'type': 'trip_student_status',
+                'data': {
+                    'student_id': student_id,
+                    'status': action
+                }
+            }
+        )
+
         # TODO: Send FCM notification to parents
-        # TODO: Emit socket event 'student-bus-status'
 
         return Response({"message": _(f"Student marked as {action}.")})
 
