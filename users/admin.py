@@ -14,6 +14,7 @@ from saferoute_backend.admin import saferoute_admin_site
 from users.enums import UserTypeChoices
 from users.models import AdminUser, DriverUser, GuardianUser, AssistantUser
 from users.forms.admins import AdminUserChangeForm, AdminUserCreationForm
+from children.models import Child
 
 
 # ─── Resources ──────────────────────────────────────────────────────────────────
@@ -149,8 +150,16 @@ class DriverUserAdmin(ImportExportModelAdmin):
             super().save_model(request, obj, form, change)
 
 
+class ChildInline(admin.StackedInline):
+    model = Child
+    extra = 1
+    fields = ('first_name', 'last_name', 'gender', 'grade', 'school_name', 'student_id', 'pickup_pin', 'is_active')
+    show_change_link = True
+
+
 class GuardianUserAdmin(ImportExportModelAdmin):
     resource_classes = [GuardianUserResource]
+    inlines = [ChildInline]
 
     list_display = ('email', 'first_name', 'last_name', 'phone_number', 'is_active')
     list_filter = ('is_active',)

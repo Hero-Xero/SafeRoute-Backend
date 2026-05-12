@@ -25,7 +25,7 @@ class GuardianPinsAPIView(APIView):
         if user.type != 'GUARDIAN':
             return Response({"detail": _("Unauthorized.")}, status=status.HTTP_403_FORBIDDEN)
         
-        children = user.children.filter(is_active=True)
+        children = Child.objects.filter(guardian_id=user.id, is_active=True)
         serializer = ChildPinSerializer(children, many=True)
         return Response(serializer.data)
 
@@ -147,6 +147,29 @@ class GuardianMessageAPIView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(guardian=self.request.user)
-        # TODO: Trigger socket event 'guardian-message' (B11)
+        message = serializer.save(guardian=self.request.user)
+        
+        from trips.models import TripChild
+        from trips.enums import TripStatusChoices
+        trip_child = TripChild.objects.filter(
+            child=message.student,
+            trip__status=TripStatusChoices.IN_PROGRESS
+        ).first()
+
+        if trip_child:
+            from channels.layers import get_channel_layer
+            from asgiref.sync import async_to_sync
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                f'trip_{trip_child.trip.id}',
+                {
+                    'type': 'trip_guardian_message',
+                    'data': {
+                        'student_id': message.student.id,
+                        'content': message.content,
+                        'guardian_name': f"{self.request.user.first_name} {self.request.user.last_name}"
+                    }
+                }
+            )
+
         # TODO: Send push notification to assistant

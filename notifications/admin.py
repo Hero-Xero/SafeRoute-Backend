@@ -201,10 +201,40 @@ class BroadcastNotificationAdmin(ImportExportModelAdmin):
     )
 
     def save_model(self, request, obj, form, change):
+        is_newly_sent = False
         if obj.is_sent and not obj.sent_at:
             obj.sent_at = timezone.now()
             obj.sent_by = request.user
+            is_newly_sent = True
+        
         super().save_model(request, obj, form, change)
+
+        if is_newly_sent:
+            from users.models import User
+            from notifications.models import Notification
+            from users.enums import UserTypeChoices
+
+            users_qs = User.objects.none()
+            if obj.target_all:
+                users_qs = User.objects.all()
+            else:
+                if obj.target_guardians:
+                    users_qs = users_qs | User.objects.filter(type=UserTypeChoices.GUARDIAN)
+                if obj.target_drivers:
+                    users_qs = users_qs | User.objects.filter(type=UserTypeChoices.DRIVER)
+
+            notifications_to_create = [
+                Notification(
+                    user=u,
+                    title=obj.title,
+                    body=obj.body,
+                    type=obj.type,
+                    status='SENT',  # Mark as sent for testing
+                    sent_at=timezone.now()
+                ) for u in users_qs
+            ]
+            if notifications_to_create:
+                Notification.objects.bulk_create(notifications_to_create)
 
     def target_summary(self, obj):
         if obj.target_all:
