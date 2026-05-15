@@ -147,16 +147,16 @@ class BusAdmin(ImportExportModelAdmin):
 class RouteAdmin(ImportExportModelAdmin):
     resource_classes = [RouteResource]
 
-    list_display = ('name', 'school_name', 'bus', 'stop_count', 'is_active', 'created_at')
+    list_display = ('name', 'school_name', 'bus', 'assistant', 'stop_count', 'is_active', 'created_at')
     list_filter = ('is_active',)
-    search_fields = ('name', 'school_name')
+    search_fields = ('name', 'school_name', 'assistant__first_name', 'assistant__last_name')
     readonly_fields = ('created_at', 'updated_at')
-    autocomplete_fields = ['bus']
+    autocomplete_fields = ['bus', 'assistant']
     inlines = [RouteStopInline, RouteChildInline]
 
     fieldsets = (
         (_('Route Info'), {
-            'fields': ('name', 'description', 'bus', 'is_active')
+            'fields': ('name', 'description', 'bus', 'assistant', 'is_active')
         }),
         (_('School Info'), {
             'fields': ('school_name', 'school_latitude', 'school_longitude')

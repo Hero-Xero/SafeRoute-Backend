@@ -79,6 +79,13 @@ class Route(models.Model):
         related_name='routes',
         verbose_name=_('Assigned Bus')
     )
+    assistant = models.ForeignKey(
+        AssistantUser,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='assigned_routes',
+        verbose_name=_('Assigned Assistant')
+    )
     is_active = models.BooleanField(_('Active'), default=True)
     created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
     updated_at = models.DateTimeField(_('Updated At'), auto_now=True)
@@ -215,6 +222,11 @@ class Trip(models.Model):
         verbose_name = _('Trip')
         verbose_name_plural = _('Trips')
         ordering = ['-scheduled_date', '-created_at']
+
+    def save(self, *args, **kwargs):
+        if not self.assistant and self.route and self.route.assistant:
+            self.assistant = self.route.assistant
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.route.name} | {self.get_trip_type_display()} | {self.scheduled_date}"
