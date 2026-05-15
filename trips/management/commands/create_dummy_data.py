@@ -62,14 +62,14 @@ class Command(BaseCommand):
             # ---------------------------------------------------------
             guardian_1, _ = GuardianUser.objects.get_or_create(
                 email='guardian1@saferoute.com',
-                defaults={'first_name': 'Mary', 'last_name': 'Smith', 'phone_number': '+1234567895', 'is_verified': True}
+                defaults={'first_name': 'Mary', 'last_name': 'Smith', 'phone_number': '+1234567895', 'is_verified': True, 'pickup_pin': '1234'}
             )
             guardian_1.set_password('Guardian123!')
             guardian_1.save()
 
             guardian_2, _ = GuardianUser.objects.get_or_create(
                 email='guardian2@saferoute.com',
-                defaults={'first_name': 'Paul', 'last_name': 'Jones', 'phone_number': '+1234567896', 'is_verified': True}
+                defaults={'first_name': 'Paul', 'last_name': 'Jones', 'phone_number': '+1234567896', 'is_verified': True, 'pickup_pin': '5678'}
             )
             guardian_2.set_password('Guardian123!')
             guardian_2.save()
@@ -92,19 +92,19 @@ class Command(BaseCommand):
             # ---------------------------------------------------------
             child_1, _ = Child.objects.get_or_create(
                 guardian=guardian_1, first_name='Jimmy', last_name='Smith',
-                defaults={'grade': '3rd Grade', 'pickup_pin': '1111', 'is_active': True}
+                defaults={'grade': '3rd Grade', 'is_active': True}
             )
             child_2, _ = Child.objects.get_or_create(
                 guardian=guardian_1, first_name='Sally', last_name='Smith',
-                defaults={'grade': '1st Grade', 'pickup_pin': '2222', 'is_active': True}
+                defaults={'grade': '1st Grade', 'is_active': True}
             )
             child_3, _ = Child.objects.get_or_create(
                 guardian=guardian_2, first_name='Tommy', last_name='Jones',
-                defaults={'grade': '5th Grade', 'pickup_pin': '3333', 'is_active': True}
+                defaults={'grade': '5th Grade', 'is_active': True}
             )
             child_4, _ = Child.objects.get_or_create(
                 guardian=guardian_2, first_name='Lily', last_name='Jones',
-                defaults={'grade': 'Kindergarten', 'pickup_pin': '4444', 'is_active': True}
+                defaults={'grade': 'Kindergarten', 'is_active': True}
             )
 
             # Create a pending Location Change Request for child 1
