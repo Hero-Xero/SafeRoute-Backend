@@ -58,6 +58,20 @@ def send_push_notification_task(notification_id):
             ),
             data=stringified_data,
             tokens=list(tokens),
+            android=messaging.AndroidConfig(
+                priority='high',
+                notification=messaging.AndroidNotification(
+                    sound='default'
+                )
+            ),
+            apns=messaging.APNSConfig(
+                payload=messaging.APNSPayload(
+                    aps=messaging.Aps(
+                        sound='default',
+                        content_available=True,
+                    )
+                )
+            )
         )
         
         response = messaging.send_multicast(message)
