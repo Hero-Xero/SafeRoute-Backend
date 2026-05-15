@@ -153,7 +153,7 @@ class DriverUserAdmin(ImportExportModelAdmin):
 class ChildInline(admin.StackedInline):
     model = Child
     extra = 1
-    fields = ('first_name', 'last_name', 'gender', 'grade', 'school_name', 'student_id', 'pickup_pin', 'is_active')
+    fields = ('first_name', 'last_name', 'gender', 'grade', 'school_name', 'student_id', 'is_active')
     show_change_link = True
 
 
@@ -161,7 +161,7 @@ class GuardianUserAdmin(ImportExportModelAdmin):
     resource_classes = [GuardianUserResource]
     inlines = [ChildInline]
 
-    list_display = ('email', 'first_name', 'last_name', 'phone_number', 'is_active')
+    list_display = ('email', 'first_name', 'last_name', 'phone_number', 'pickup_pin', 'is_active')
     list_filter = ('is_active',)
     search_fields = ('email', 'first_name', 'last_name', 'phone_number')
     readonly_fields = ('date_joined',)
@@ -174,7 +174,7 @@ class GuardianUserAdmin(ImportExportModelAdmin):
             ),
         }),
         (_("Account Status"), {
-            "fields": ("is_active", "is_verified", "is_deleted"),
+            "fields": ("pickup_pin", "is_active", "is_verified", "is_deleted"),
         }),
         (_("Important Dates"), {
             "fields": ("date_joined",),

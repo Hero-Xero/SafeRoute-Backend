@@ -38,7 +38,7 @@ class StudentDataSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source='child.full_name')
     grade = serializers.CharField(source='child.get_grade_display')
     contacts = serializers.SerializerMethodField()
-    primaryPin = serializers.CharField(source='child.pickup_pin')
+    primaryPin = serializers.CharField(source='child.guardian.pickup_pin')
     tempPin = serializers.CharField(default="") # TBD: implement temp pins if needed
     activePickup = serializers.SerializerMethodField()
     activeDropoff = serializers.SerializerMethodField()

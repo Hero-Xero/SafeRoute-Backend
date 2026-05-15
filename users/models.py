@@ -49,8 +49,21 @@ class User(AbstractBaseUser, PermissionsMixin):
         _('Verified'), default=False, help_text=_('Designates whether the user has verified their email address.'))
     is_deleted = models.BooleanField(
         _('Deleted'), default=False, help_text=_('Designates whether the user has deleted their account.'))
+    pickup_pin = models.CharField(
+        _('Pickup PIN'), 
+        max_length=6, 
+        blank=True, 
+        null=True, 
+        help_text=_('4-6 digit code for pickup verification (Guardians only).')
+    )
 
     objects = AdminUserManager()
+
+    def save(self, *args, **kwargs):
+        if not self.pickup_pin and self.type == UserTypeChoices.GUARDIAN:
+            import random
+            self.pickup_pin = "".join([str(random.randint(0, 9)) for _ in range(4)])
+        super().save(*args, **kwargs)
 
 
 class AdminUser(User):

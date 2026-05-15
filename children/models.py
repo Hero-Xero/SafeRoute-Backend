@@ -36,13 +36,6 @@ class Child(models.Model):
         verbose_name=_('Profile Image')
     )
     student_id = models.CharField(_('Student ID'), max_length=100, blank=True, null=True)
-    pickup_pin = models.CharField(
-        _('Pickup PIN'), 
-        max_length=6, 
-        blank=True, 
-        null=True, 
-        help_text=_('4-6 digit code for pickup verification.')
-    )
     notes = models.TextField(_('Notes'), blank=True, null=True)
     is_active = models.BooleanField(_('Active'), default=True)
     created_at = models.DateTimeField(_('Created At'), auto_now_add=True)
@@ -57,9 +50,6 @@ class Child(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     def save(self, *args, **kwargs):
-        if not self.pickup_pin:
-            import random
-            self.pickup_pin = "".join([str(random.randint(0, 9)) for _ in range(4)])
         super().save(*args, **kwargs)
 
     @property

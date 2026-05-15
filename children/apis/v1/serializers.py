@@ -4,7 +4,7 @@ from children.enums import LocationChangeStatus, LocationChangeType
 
 
 class ChildPinSerializer(serializers.ModelSerializer):
-    masterPin = serializers.CharField(source='pickup_pin')
+    masterPin = serializers.CharField(source='guardian.pickup_pin')
     tempPin = serializers.SerializerMethodField()
 
     class Meta:

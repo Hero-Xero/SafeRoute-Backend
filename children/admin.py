@@ -23,7 +23,7 @@ class ChildResource(resources.ModelResource):
         fields = (
             'id', 'guardian_email', 'first_name', 'last_name',
             'date_of_birth', 'gender', 'grade', 'school_name',
-            'student_id', 'pickup_pin', 'is_active', 'created_at',
+            'student_id', 'is_active', 'created_at',
         )
         export_order = fields
         import_id_fields = ['id']
@@ -59,14 +59,13 @@ class ChildAdmin(ImportExportModelAdmin):
     resource_classes = [ChildResource]
 
     list_display = (
-        'full_name', 'guardian', 'pickup_pin', 'school_name', 'grade', 'is_active'
+        'full_name', 'guardian', 'get_guardian_pin', 'school_name', 'grade', 'is_active'
     )
     list_filter = ('is_active', 'grade', 'gender')
     search_fields = (
         'first_name', 'last_name', 'student_id',
         'guardian__first_name', 'guardian__last_name', 'guardian__email'
     )
-    readonly_fields = ('created_at', 'updated_at')
     autocomplete_fields = ['guardian']
 
     fieldsets = (
@@ -77,7 +76,7 @@ class ChildAdmin(ImportExportModelAdmin):
             )
         }),
         (_('School Info'), {
-            'fields': ('school_name', 'grade', 'student_id', 'pickup_pin')
+            'fields': ('school_name', 'grade', 'student_id', 'get_guardian_pin')
         }),
         (_('Additional Info'), {
             'fields': ('notes', 'is_active')
@@ -90,6 +89,12 @@ class ChildAdmin(ImportExportModelAdmin):
     def full_name(self, obj):
         return obj.full_name
     full_name.short_description = _('Full Name')
+
+    def get_guardian_pin(self, obj):
+        return obj.guardian.pickup_pin if obj.guardian else "-"
+    get_guardian_pin.short_description = _('Guardian PIN')
+    
+    readonly_fields = ('get_guardian_pin', 'created_at', 'updated_at')
 
 
 class StudentAbsenceAdmin(ImportExportModelAdmin):
