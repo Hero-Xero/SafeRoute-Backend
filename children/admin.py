@@ -28,6 +28,30 @@ class ChildResource(resources.ModelResource):
         export_order = fields
         import_id_fields = ['id']
 
+class StudentAbsenceResource(resources.ModelResource):
+    student_name = fields.Field(
+        column_name='student_name',
+        attribute='student',
+        widget=ForeignKeyWidget(Child, field='first_name')
+    )
+
+    class Meta:
+        model = StudentAbsence
+        fields = ('id', 'student_name', 'date', 'notes', 'created_at')
+        export_order = fields
+
+
+class LocationChangeRequestResource(resources.ModelResource):
+    guardian_email = fields.Field(
+        column_name='guardian_email',
+        attribute='guardian',
+        widget=ForeignKeyWidget(GuardianUser, field='email')
+    )
+
+    class Meta:
+        model = LocationChangeRequest
+        fields = ('id', 'guardian_email', 'target_date', 'change_type', 'new_location', 'status', 'notes', 'created_at')
+        export_order = fields
 
 # ─── Admin ───────────────────────────────────────────────────────────────────────
 
@@ -68,7 +92,8 @@ class ChildAdmin(ImportExportModelAdmin):
     full_name.short_description = _('Full Name')
 
 
-class StudentAbsenceAdmin(admin.ModelAdmin):
+class StudentAbsenceAdmin(ImportExportModelAdmin):
+    resource_classes = [StudentAbsenceResource]
     list_display = ('student', 'date', 'created_at')
     list_filter = ('date', 'student__grade')
     search_fields = ('student__first_name', 'student__last_name', 'student__student_id')
@@ -81,7 +106,8 @@ class StudentSavedLocationAdmin(admin.ModelAdmin):
     search_fields = ('description', 'guardian__first_name', 'guardian__last_name', 'guardian__email')
 
 
-class LocationChangeRequestAdmin(admin.ModelAdmin):
+class LocationChangeRequestAdmin(ImportExportModelAdmin):
+    resource_classes = [LocationChangeRequestResource]
     list_display = ('guardian', 'target_date', 'status', 'change_type', 'created_at')
     list_filter = ('status', 'target_date', 'change_type')
     search_fields = ('guardian__first_name', 'guardian__last_name', 'guardian__email')
