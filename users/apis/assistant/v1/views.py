@@ -19,7 +19,8 @@ class AssistantSendOtpView(APIView):
     permission_classes = []
 
     def post(self, request, *args, **kwargs):
-        serializer = SendOtpSerializer(data=request.data, context={'request': request})
+        serializer = SendOtpSerializer(
+            data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
 
         user = serializer.validated_data['user']
@@ -85,7 +86,8 @@ class AssistantResendOtpView(APIView):
     permission_classes = []
 
     def post(self, request, *args, **kwargs):
-        serializer = ResendOtpSerializer(data=request.data, context={'request': request})
+        serializer = ResendOtpSerializer(
+            data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
 
         user = serializer.validated_data['user']
@@ -93,7 +95,8 @@ class AssistantResendOtpView(APIView):
             return Response({"detail": _("User is not an Assistant.")}, status=status.HTTP_403_FORBIDDEN)
 
         otp_service = AssistantOtpService(user)
-        otp, created, remaining_time = otp_service.generate_or_get_otp(force=True)
+        otp, created, remaining_time = otp_service.generate_or_get_otp(
+            force=True)
 
         return Response({
             "message": _("A new OTP has been sent to your email."),
