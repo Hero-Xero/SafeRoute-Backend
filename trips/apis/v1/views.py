@@ -241,7 +241,35 @@ class StudentActionAPIView(APIView):
             }
         )
 
-        # TODO: Send FCM notification to parents
+        # Send FCM notification to parent
+        guardian = trip_child.child.guardian
+        if guardian:
+            from notifications.models import Notification, NotificationChannelChoices, NotificationStatusChoices
+            from notifications.tasks import send_push_notification_task
+            from rq import Queue
+            from redis import Redis
+            from django.conf import settings
+
+            title = _("Student Picked Up") if action == 'boarded' else _("Student Dropped Off")
+            status_text = _('picked up') if action == 'boarded' else _('dropped off')
+            body = _(f"{trip_child.child.first_name} has been {status_text} successfully.")
+            
+            notification = Notification.objects.create(
+                user=guardian,
+                title=title,
+                body=body,
+                type='trip_update',
+                channel=NotificationChannelChoices.PUSH,
+                status=NotificationStatusChoices.PENDING,
+                data={'student_id': str(student_id), 'action': action}
+            )
+            
+            redis_conn = Redis(
+                host=getattr(settings, 'REDIS_HOST', 'localhost'),
+                port=int(getattr(settings, 'REDIS_PORT', 6379))
+            )
+            q = Queue('default', connection=redis_conn)
+            q.enqueue(send_push_notification_task, notification.id)
 
         return Response({"message": _(f"Student marked as {action}.")})
 
