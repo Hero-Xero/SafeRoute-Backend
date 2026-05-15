@@ -139,6 +139,7 @@ class BroadcastNotification(models.Model):
     target_all = models.BooleanField(_('Send to All Users'), default=True)
     target_guardians = models.BooleanField(_('Send to Guardians'), default=False)
     target_drivers = models.BooleanField(_('Send to Drivers'), default=False)
+    target_assistants = models.BooleanField(_('Send to Assistants'), default=False)
     is_sent = models.BooleanField(_('Sent'), default=False)
     sent_at = models.DateTimeField(_('Sent At'), blank=True, null=True)
     sent_by = models.ForeignKey(

@@ -72,7 +72,7 @@ class BroadcastNotificationResource(resources.ModelResource):
         model = BroadcastNotification
         fields = (
             'id', 'title', 'body', 'type',
-            'target_all', 'target_guardians', 'target_drivers',
+            'target_all', 'target_guardians', 'target_drivers', 'target_assistants',
             'is_sent', 'sent_at', 'sent_by_email', 'created_at'
         )
         export_order = fields
@@ -181,7 +181,7 @@ class BroadcastNotificationAdmin(ImportExportModelAdmin):
     list_display = (
         'title', 'type', 'target_summary', 'is_sent', 'sent_at', 'sent_by', 'created_at'
     )
-    list_filter = ('is_sent', 'type', 'target_all', 'target_guardians', 'target_drivers')
+    list_filter = ('is_sent', 'type', 'target_all', 'target_guardians', 'target_drivers', 'target_assistants')
     search_fields = ('title', 'body')
     readonly_fields = ('created_at', 'updated_at', 'sent_at', 'sent_by')
 
@@ -190,7 +190,7 @@ class BroadcastNotificationAdmin(ImportExportModelAdmin):
             'fields': ('title', 'body', 'type')
         }),
         (_('Target Audience'), {
-            'fields': ('target_all', 'target_guardians', 'target_drivers')
+            'fields': ('target_all', 'target_guardians', 'target_drivers', 'target_assistants')
         }),
         (_('Sending Info'), {
             'fields': ('is_sent', 'sent_at', 'sent_by')
@@ -222,6 +222,20 @@ class BroadcastNotificationAdmin(ImportExportModelAdmin):
                     users_qs = users_qs | User.objects.filter(type=UserTypeChoices.GUARDIAN)
                 if obj.target_drivers:
                     users_qs = users_qs | User.objects.filter(type=UserTypeChoices.DRIVER)
+                if obj.target_assistants:
+                    users_qs = users_qs | User.objects.filter(type=UserTypeChoices.ASSISTANT)
+
+            from redis import Redis
+            # pyrefly: ignore [missing-import]
+            from rq import Queue
+            from django.conf import settings
+            from notifications.tasks import send_push_notification_task
+
+            redis_conn = Redis(
+                host=getattr(settings, 'REDIS_HOST', 'localhost'),
+                port=int(getattr(settings, 'REDIS_PORT', 6379))
+            )
+            q = Queue('default', connection=redis_conn)
 
             notifications_to_create = [
                 Notification(
@@ -229,12 +243,14 @@ class BroadcastNotificationAdmin(ImportExportModelAdmin):
                     title=obj.title,
                     body=obj.body,
                     type=obj.type,
-                    status='SENT',  # Mark as sent for testing
-                    sent_at=timezone.now()
+                    channel=NotificationChannelChoices.PUSH,
+                    status=NotificationStatusChoices.PENDING,
                 ) for u in users_qs
             ]
             if notifications_to_create:
-                Notification.objects.bulk_create(notifications_to_create)
+                created_notifications = Notification.objects.bulk_create(notifications_to_create)
+                for n in created_notifications:
+                    q.enqueue(send_push_notification_task, n.id)
 
     def target_summary(self, obj):
         if obj.target_all:
@@ -244,6 +260,8 @@ class BroadcastNotificationAdmin(ImportExportModelAdmin):
             targets.append(_('Guardians'))
         if obj.target_drivers:
             targets.append(_('Drivers'))
+        if obj.target_assistants:
+            targets.append(_('Assistants'))
         return ', '.join(str(t) for t in targets) or _('None')
     target_summary.short_description = _('Target')
 
