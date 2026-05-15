@@ -107,12 +107,15 @@ class TripDetailsSerializer(serializers.ModelSerializer):
     assistantName = serializers.SerializerMethodField()
     assistantPhoneNum = serializers.SerializerMethodField()
     tripUpdate = serializers.SerializerMethodField()
+    routeName = serializers.CharField(source='route.name', read_only=True)
+    routeId = serializers.IntegerField(source='route.id', read_only=True)
 
     class Meta:
         model = Trip
         fields = [
             'tripActive', 'licencePlateLetters', 'licencePlateNumbers',
-            'driverName', 'assistantName', 'assistantPhoneNum', 'tripUpdate'
+            'driverName', 'assistantName', 'assistantPhoneNum', 'tripUpdate',
+            'routeName', 'routeId'
         ]
 
     def get_tripActive(self, obj):
