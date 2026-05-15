@@ -136,10 +136,14 @@ class TripDetailsSerializer(serializers.ModelSerializer):
         return ""
 
     def get_driverName(self, obj):
-        return obj.driver.full_name if obj.driver else ""
+        if obj.driver:
+            return f"{obj.driver.first_name or ''} {obj.driver.last_name or ''}".strip()
+        return ""
 
     def get_assistantName(self, obj):
-        return obj.assistant.full_name if obj.assistant else ""
+        if obj.assistant:
+            return f"{obj.assistant.first_name or ''} {obj.assistant.last_name or ''}".strip()
+        return ""
 
     def get_assistantPhoneNum(self, obj):
         return str(obj.assistant.phone_number) if obj.assistant else ""
