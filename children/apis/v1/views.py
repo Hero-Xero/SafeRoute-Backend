@@ -24,7 +24,7 @@ class GuardianPinsAPIView(APIView):
         user = request.user
         if user.type != 'GUARDIAN':
             return Response({"detail": _("Unauthorized.")}, status=status.HTTP_403_FORBIDDEN)
-        
+
         children = Child.objects.filter(guardian_id=user.id, is_active=True)
         serializer = ChildPinSerializer(children, many=True)
         return Response(serializer.data)
@@ -55,10 +55,13 @@ class LocationChangeRequestListCreateAPIView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         # Specific rule for D1: active requests
-        queryset = LocationChangeRequest.objects.filter(guardian=self.request.user)
-        active_only = self.request.query_params.get('active_only', 'false').lower() == 'true'
+        queryset = LocationChangeRequest.objects.filter(
+            guardian=self.request.user)
+        active_only = self.request.query_params.get(
+            'active_only', 'false').lower() == 'true'
         if active_only:
-            queryset = queryset.filter(status__in=[LocationChangeStatus.PENDING_REVIEW, LocationChangeStatus.ACCEPTED])
+            queryset = queryset.filter(
+                status__in=[LocationChangeStatus.PENDING_REVIEW, LocationChangeStatus.ACCEPTED])
         return queryset
 
     def perform_create(self, serializer):
@@ -91,10 +94,11 @@ class LocationChangeRequestDetailAPIView(generics.RetrieveDestroyAPIView):
         instance = self.get_object()
         if instance.status not in [LocationChangeStatus.PENDING_REVIEW, LocationChangeStatus.ACCEPTED]:
             return Response(
-                {"detail": _("Cannot cancel a request that is already processed.")},
+                {"detail": _(
+                    "Cannot cancel a request that is already processed.")},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         # Deadline check (simplified: 3 AM of target date)
         if timezone.now().date() >= instance.target_date:
             return Response(
@@ -148,7 +152,7 @@ class GuardianMessageAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         message = serializer.save(guardian=self.request.user)
-        
+
         from trips.models import TripChild
         from trips.enums import TripStatusChoices
         trip_child = TripChild.objects.filter(
@@ -181,7 +185,8 @@ class GuardianMessageAPIView(generics.CreateAPIView):
             from django.conf import settings
 
             assistant = trip_child.trip.assistant
-            guardian_name = f"{self.request.user.first_name} {self.request.user.last_name}".strip()
+            guardian_name = f"{self.request.user.first_name} {self.request.user.last_name}".strip(
+            )
             student_name = message.student.first_name
 
             notification = Notification.objects.create(

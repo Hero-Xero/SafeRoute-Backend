@@ -200,7 +200,7 @@ class RouteStudentsAPIView(APIView):
         # Build base filter by user type
         user_filter = {"driver": user} if user.type == 'DRIVER' else {"assistant": user}
 
-        # Problem 1 Fix: First try IN_PROGRESS trip, then fallback to today's SCHEDULED trip
+        # First try IN_PROGRESS, then most recent SCHEDULED trip for this user
         trip = (
             Trip.objects.filter(
                 trip_type=trip_type,
@@ -210,9 +210,9 @@ class RouteStudentsAPIView(APIView):
             or
             Trip.objects.filter(
                 trip_type=trip_type,
-                scheduled_date=today,
+                status=TripStatusChoices.SCHEDULED,
                 **user_filter
-            ).first()
+            ).order_by('-scheduled_date').first()  # most recent scheduled trip
         )
 
         if not trip:
