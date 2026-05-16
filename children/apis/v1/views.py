@@ -172,4 +172,35 @@ class GuardianMessageAPIView(generics.CreateAPIView):
                 }
             )
 
-        # TODO: Send push notification to assistant
+        # Send push notification to assistant
+        if trip_child and trip_child.trip.assistant:
+            from notifications.models import Notification, NotificationChannelChoices, NotificationStatusChoices
+            from notifications.tasks import send_push_notification_task
+            from rq import Queue
+            from redis import Redis
+            from django.conf import settings
+
+            assistant = trip_child.trip.assistant
+            guardian_name = f"{self.request.user.first_name} {self.request.user.last_name}".strip()
+            student_name = message.student.first_name
+
+            notification = Notification.objects.create(
+                user=assistant,
+                title=f"Message from {guardian_name}",
+                body=f"Re: {student_name} — {message.content}",
+                type='guardian_message',
+                channel=NotificationChannelChoices.PUSH,
+                status=NotificationStatusChoices.PENDING,
+                data={
+                    'student_id': str(message.student.id),
+                    'guardian_id': str(self.request.user.id),
+                    'trip_id': str(trip_child.trip.id),
+                }
+            )
+
+            redis_conn = Redis(
+                host=getattr(settings, 'REDIS_HOST', 'localhost'),
+                port=int(getattr(settings, 'REDIS_PORT', 6379))
+            )
+            q = Queue('default', connection=redis_conn)
+            q.enqueue(send_push_notification_task, notification.id)
