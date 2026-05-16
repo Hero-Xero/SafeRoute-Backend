@@ -17,6 +17,7 @@ class RouteStopSerializer(serializers.ModelSerializer):
 
 
 class StudentDataSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source='child.id')       # Child ID — use this in /students/{id}/boarded
     name = serializers.CharField(source='child.full_name')
     grade = serializers.SerializerMethodField()
     pinCodes = serializers.SerializerMethodField()
@@ -29,7 +30,7 @@ class StudentDataSerializer(serializers.ModelSerializer):
     class Meta:
         model = TripChild
         fields = [
-            'name', 'grade', 'pinCodes', 'guardianContact',
+            'id', 'name', 'grade', 'pinCodes', 'guardianContact',
             'pickedUp', 'droppedOff', 'latestMessage', 'activePickup',
         ]
 

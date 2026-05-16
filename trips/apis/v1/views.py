@@ -253,6 +253,7 @@ class RouteStudentsAPIView(APIView):
                         "coords": [lat, lng],
                     }
                 students_data.append({
+                    "id": child.id,
                     "name": child.full_name,
                     "grade": child.get_grade_display() if child.grade else None,
                     "pinCodes": {
