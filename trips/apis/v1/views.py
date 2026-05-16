@@ -216,28 +216,26 @@ class RouteStudentsAPIView(APIView):
         )
 
         if not trip:
-            # Last resort: find any route assigned to this assistant/driver today
-            # and build the student list from RouteChild
+            # Fallback: find route directly assigned to this assistant/driver
             if user.type == 'ASSISTANT':
-                route = Route.objects.filter(
-                    trips__assistant=user,
-                    trips__scheduled_date=today,
-                ).first()
+                route = (
+                    Route.objects.filter(assistant=user).first()
+                    or Route.objects.filter(trips__assistant=user).order_by('-trips__scheduled_date').first()
+                )
             else:
-                route = Route.objects.filter(
-                    trips__driver=user,
-                    trips__scheduled_date=today,
-                ).first()
+                route = (
+                    Route.objects.filter(driver=user).first()
+                    or Route.objects.filter(trips__driver=user).order_by('-trips__scheduled_date').first()
+                )
 
             if not route:
                 return Response({"students": []})
 
-            # Build synthetic TripChild-like data from RouteChild
-            # We don't have a live trip, so return route-assigned students with no live status
             route_children = RouteChild.objects.filter(
                 route=route, is_active=True
             ).select_related('child', 'child__guardian', 'stop')
 
+            from children.models import GuardianMessage
             students_data = []
             for rc in route_children:
                 child = rc.child
@@ -252,6 +250,10 @@ class RouteStudentsAPIView(APIView):
                         "gMapsUrl": f"https://www.google.com/maps/search/?api=1&query={lat},{lng}",
                         "coords": [lat, lng],
                     }
+                # Latest message for this student
+                msg = GuardianMessage.objects.filter(student=child).order_by('-created_at').first()
+                latest_message = {"content": msg.content, "createdAt": msg.created_at.isoformat()} if msg else None
+
                 students_data.append({
                     "id": child.id,
                     "name": child.full_name,
@@ -268,7 +270,7 @@ class RouteStudentsAPIView(APIView):
                     } if guardian else None,
                     "pickedUp": False,
                     "droppedOff": False,
-                    "latestMessage": None,
+                    "latestMessage": latest_message,
                     "activePickup": pickup,
                 })
             return Response({"students": students_data})
