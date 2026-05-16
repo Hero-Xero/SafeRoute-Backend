@@ -1,8 +1,20 @@
 import json
+from django.middleware.csrf import CsrfViewMiddleware as DjangoCsrfMiddleware
 from rest_framework.utils.encoders import JSONEncoder
 
 from django.utils.translation import gettext_lazy as _
 from rest_framework.response import Response
+
+
+class SelectiveCsrfMiddleware(DjangoCsrfMiddleware):
+    """
+    Applies CSRF protection only to admin and non-API routes.
+    API routes (/api/) are exempt because they use JWT Bearer token auth.
+    """
+    def process_view(self, request, callback, callback_args, callback_kwargs):
+        if request.path.startswith('/api/'):
+            return None  # Skip CSRF check for all API endpoints
+        return super().process_view(request, callback, callback_args, callback_kwargs)
 
 
 class CustomResponseMiddleware:
