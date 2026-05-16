@@ -255,7 +255,10 @@ class RouteStudentsAPIView(APIView):
                 students_data.append({
                     "name": child.full_name,
                     "grade": child.get_grade_display() if child.grade else None,
-                    "pinCodes": [{"code": guardian.pickup_pin, "label": "Guardian PIN"}] if guardian and guardian.pickup_pin else [],
+                    "pinCodes": {
+                        "masterPin": guardian.pickup_pin if guardian else None,
+                        "tempPin": guardian.temp_pin if guardian else None,
+                    },
                     "guardianContact": {
                         "primaryContactNum": str(guardian.phone_number) if guardian and guardian.phone_number else None,
                         "primaryContactRole": str(_("Guardian")),
@@ -309,6 +312,13 @@ class StudentActionAPIView(APIView):
 
         trip_child.save()
 
+        # Rotate the guardian's temp_pin on every pickup/dropoff action
+        guardian = trip_child.child.guardian
+        if guardian:
+            import random
+            guardian.temp_pin = "".join([str(random.randint(0, 9)) for _ in range(4)])
+            guardian.save(update_fields=['temp_pin'])
+
         from channels.layers import get_channel_layer
         from asgiref.sync import async_to_sync
         channel_layer = get_channel_layer()
@@ -324,7 +334,6 @@ class StudentActionAPIView(APIView):
         )
 
         # Send FCM notification to parent
-        guardian = trip_child.child.guardian
         if guardian:
             from notifications.models import Notification, NotificationChannelChoices, NotificationStatusChoices
             from notifications.tasks import send_push_notification_task

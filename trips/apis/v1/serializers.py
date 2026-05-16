@@ -38,13 +38,12 @@ class StudentDataSerializer(serializers.ModelSerializer):
 
     def get_pinCodes(self, obj):
         guardian = obj.child.guardian
-        pins = []
-        if guardian and guardian.pickup_pin:
-            pins.append({"code": guardian.pickup_pin, "label": str(_("Guardian PIN"))})
-        child_pin = getattr(obj.child, 'pickup_pin', None)
-        if child_pin:
-            pins.append({"code": child_pin, "label": str(_("Child PIN"))})
-        return pins
+        if not guardian:
+            return {"masterPin": None, "tempPin": None}
+        return {
+            "masterPin": guardian.pickup_pin,   # auto-generated on guardian creation
+            "tempPin": guardian.temp_pin or None,  # manually set, nullable
+        }
 
     def get_guardianContact(self, obj):
         guardian = obj.child.guardian

@@ -12,7 +12,7 @@ class ChildPinSerializer(serializers.ModelSerializer):
         fields = ['id', 'masterPin', 'tempPin']
 
     def get_tempPin(self, obj):
-        return "" # Placeholder for temporary PIN logic
+        return obj.guardian.temp_pin or None
 
 
 class StudentSavedLocationSerializer(serializers.ModelSerializer):
