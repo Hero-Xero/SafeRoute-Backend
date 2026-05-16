@@ -50,11 +50,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_deleted = models.BooleanField(
         _('Deleted'), default=False, help_text=_('Designates whether the user has deleted their account.'))
     pickup_pin = models.CharField(
-        _('Pickup PIN'), 
+        _('Master Pickup PIN'), 
         max_length=6, 
         blank=True, 
         null=True, 
-        help_text=_('4-6 digit code for pickup verification (Guardians only).')
+        help_text=_('4-6 digit master code auto-generated for pickup verification (Guardians only).')
+    )
+    temp_pin = models.CharField(
+        _('Temporary PIN'),
+        max_length=6,
+        blank=True,
+        null=True,
+        help_text=_('Temporary PIN manually set by admin. Overrides master PIN when present.')
     )
 
     objects = AdminUserManager()
@@ -63,6 +70,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         if not self.pickup_pin and self.type == UserTypeChoices.GUARDIAN:
             import random
             self.pickup_pin = "".join([str(random.randint(0, 9)) for _ in range(4)])
+        if not self.temp_pin and self.type == UserTypeChoices.GUARDIAN:
+            import random
+            self.temp_pin = "".join([str(random.randint(0, 9)) for _ in range(4)])
         super().save(*args, **kwargs)
 
 
