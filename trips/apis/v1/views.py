@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from django.utils.translation import gettext as _
 
-from trips.models import Trip, TripChild, Route, RouteStop
+from trips.models import Trip, TripChild, Route, RouteStop, RouteChild
 from trips.apis.v1.serializers import (
     TripDetailsSerializer, StudentDataSerializer, TripStatusUpdateSerializer
 )
@@ -23,23 +23,46 @@ class CurrentTripAPIView(APIView):
 
     def get(self, request):
         user = request.user
+        today = timezone.now().date()
         trip = None
-        
+
         if user.type == 'GUARDIAN':
-            # For guardians, find the active trip that has one of their children
+            # Problem 2 Fix: Resolve guardian -> children -> today's trip -> check active
+            children = list(user.children.filter(is_active=True).values_list('id', flat=True))
+            if not children:
+                return Response({"tripActive": False, "message": _("No children found for this guardian.")})
+
+            # Find any trip today that has one of this guardian's children in it
             trip = Trip.objects.filter(
-                status=TripStatusChoices.IN_PROGRESS,
-                trip_children__child__guardian=user
-            ).first()
+                scheduled_date=today,
+                trip_children__child_id__in=children
+            ).order_by('-status').first()  # IN_PROGRESS sorts above SCHEDULED
+
+            if not trip:
+                return Response({"tripActive": False, "message": _("No trip found for today for your children.")})
+
+            # Determine status label for the frontend
+            if trip.status == TripStatusChoices.IN_PROGRESS:
+                status_label = 'ongoing'
+            elif trip.status == TripStatusChoices.SCHEDULED:
+                status_label = 'online'
+            else:
+                status_label = 'offline'
+
+            serializer = TripDetailsSerializer(trip)
+            data = serializer.data
+            data['tripActive'] = trip.status == TripStatusChoices.IN_PROGRESS
+            data['tripStatus'] = status_label
+            data['message'] = _("Trip found.")
+            return Response(data)
+
         elif user.type == 'DRIVER':
             trip = Trip.objects.filter(
-                status=TripStatusChoices.IN_PROGRESS,
-                driver=user
+                status=TripStatusChoices.IN_PROGRESS, driver=user
             ).first()
         elif user.type == 'ASSISTANT':
             trip = Trip.objects.filter(
-                status=TripStatusChoices.IN_PROGRESS,
-                assistant=user
+                status=TripStatusChoices.IN_PROGRESS, assistant=user
             ).first()
 
         if not trip:
@@ -158,39 +181,98 @@ class TripLocationAPIView(APIView):
 class RouteStudentsAPIView(APIView):
     """
     B6. GET /api/v1/routes/students?direction=am|pm
-    Assigned students for today’s route.
+    Assigned students for today's route.
+    Shared endpoint for Driver and Assistant.
     """
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request):
         user = request.user
         direction = request.query_params.get('direction', 'am').upper()
-        
+        today = timezone.now().date()
+
         # Map am|pm to PICKUP|DROPOFF
         trip_type = TripTypeChoices.PICKUP if direction == 'AM' else TripTypeChoices.DROPOFF
 
-        # Find trip for the driver/assistant
-        trip_filter = {"status": TripStatusChoices.IN_PROGRESS, "trip_type": trip_type}
-        if user.type == 'DRIVER':
-            trip_filter["driver"] = user
-        elif user.type == 'ASSISTANT':
-            trip_filter["assistant"] = user
-        else:
+        if user.type not in ('DRIVER', 'ASSISTANT'):
             return Response({"detail": _("Unauthorized.")}, status=status.HTTP_403_FORBIDDEN)
 
-        trip = Trip.objects.filter(**trip_filter).first()
-        if not trip:
-            # Try to find scheduled trip if no active one
-            trip = Trip.objects.filter(
-                scheduled_date=timezone.now().date(),
+        # Build base filter by user type
+        user_filter = {"driver": user} if user.type == 'DRIVER' else {"assistant": user}
+
+        # Problem 1 Fix: First try IN_PROGRESS trip, then fallback to today's SCHEDULED trip
+        trip = (
+            Trip.objects.filter(
                 trip_type=trip_type,
-                **( {"driver": user} if user.type == 'DRIVER' else {"assistant": user} )
+                status=TripStatusChoices.IN_PROGRESS,
+                **user_filter
             ).first()
+            or
+            Trip.objects.filter(
+                trip_type=trip_type,
+                scheduled_date=today,
+                **user_filter
+            ).first()
+        )
 
         if not trip:
-            return Response({"students": []})
+            # Last resort: find any route assigned to this assistant/driver today
+            # and build the student list from RouteChild
+            if user.type == 'ASSISTANT':
+                route = Route.objects.filter(
+                    trips__assistant=user,
+                    trips__scheduled_date=today,
+                ).first()
+            else:
+                route = Route.objects.filter(
+                    trips__driver=user,
+                    trips__scheduled_date=today,
+                ).first()
 
-        students = trip.trip_children.all()
+            if not route:
+                return Response({"students": []})
+
+            # Build synthetic TripChild-like data from RouteChild
+            # We don't have a live trip, so return route-assigned students with no live status
+            route_children = RouteChild.objects.filter(
+                route=route, is_active=True
+            ).select_related('child', 'child__guardian', 'stop')
+
+            students_data = []
+            for rc in route_children:
+                child = rc.child
+                guardian = child.guardian
+                stop = rc.stop
+                pickup = None
+                if stop:
+                    lat = float(stop.latitude)
+                    lng = float(stop.longitude)
+                    pickup = {
+                        "description": stop.name,
+                        "gMapsUrl": f"https://www.google.com/maps/search/?api=1&query={lat},{lng}",
+                        "coords": [lat, lng],
+                    }
+                students_data.append({
+                    "name": child.full_name,
+                    "grade": child.get_grade_display() if child.grade else None,
+                    "pinCodes": [{"code": guardian.pickup_pin, "label": "Guardian PIN"}] if guardian and guardian.pickup_pin else [],
+                    "guardianContact": {
+                        "primaryContactNum": str(guardian.phone_number) if guardian and guardian.phone_number else None,
+                        "primaryContactRole": str(_("Guardian")),
+                        "secondaryContactNum": str(guardian.secondary_phone) if guardian and guardian.secondary_phone else None,
+                        "secondaryContactRole": str(_("Secondary Guardian")) if guardian and guardian.secondary_phone else None,
+                    } if guardian else None,
+                    "pickedUp": False,
+                    "droppedOff": False,
+                    "latestMessage": None,
+                    "activePickup": pickup,
+                })
+            return Response({"students": students_data})
+
+        # Trip found — use the serializer for live data
+        students = trip.trip_children.select_related(
+            'child', 'child__guardian', 'stop'
+        ).all()
         serializer = StudentDataSerializer(students, many=True)
         return Response({"students": serializer.data})
 

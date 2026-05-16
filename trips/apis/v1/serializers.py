@@ -16,82 +16,109 @@ class RouteStopSerializer(serializers.ModelSerializer):
         return [float(obj.latitude), float(obj.longitude)]
 
 
-class ChildContactSerializer(serializers.Serializer):
-    title = serializers.CharField()
-    phoneNum = serializers.CharField()
-
-
-class StudentLocationSerializer(serializers.Serializer):
-    id = serializers.CharField()
-    description = serializers.CharField()
-    gMapsUrl = serializers.URLField(source='gmaps_url', allow_null=True)
-    coords = serializers.SerializerMethodField()
-    type = serializers.CharField()
-    active = serializers.BooleanField(source='is_active')
-
-    def get_coords(self, obj):
-        return [float(obj.latitude), float(obj.longitude)]
-
-
 class StudentDataSerializer(serializers.ModelSerializer):
-    id = serializers.CharField(source='child.id')
     name = serializers.CharField(source='child.full_name')
-    grade = serializers.CharField(source='child.get_grade_display')
-    contacts = serializers.SerializerMethodField()
-    primaryPin = serializers.CharField(source='child.guardian.pickup_pin')
-    tempPin = serializers.CharField(default="") # TBD: implement temp pins if needed
-    activePickup = serializers.SerializerMethodField()
-    activeDropoff = serializers.SerializerMethodField()
-    statusDesc = serializers.CharField(source='get_status_display')
-    boardedBus = serializers.SerializerMethodField()
+    grade = serializers.SerializerMethodField()
+    pinCodes = serializers.SerializerMethodField()
+    guardianContact = serializers.SerializerMethodField()
+    pickedUp = serializers.SerializerMethodField()
     droppedOff = serializers.SerializerMethodField()
+    latestMessage = serializers.SerializerMethodField()
+    activePickup = serializers.SerializerMethodField()
 
     class Meta:
         model = TripChild
         fields = [
-            'id', 'name', 'grade', 'contacts', 'primaryPin', 'tempPin',
-            'activePickup', 'activeDropoff', 'statusDesc', 'boardedBus', 'droppedOff'
+            'name', 'grade', 'pinCodes', 'guardianContact',
+            'pickedUp', 'droppedOff', 'latestMessage', 'activePickup',
         ]
 
-    def get_contacts(self, obj):
+    def get_grade(self, obj):
+        return obj.child.get_grade_display() if obj.child.grade else None
+
+    def get_pinCodes(self, obj):
         guardian = obj.child.guardian
-        return [
-            {"title": _("Guardian"), "phoneNum": str(guardian.phone_number)}
-        ]
+        pins = []
+        if guardian and guardian.pickup_pin:
+            pins.append({"code": guardian.pickup_pin, "label": str(_("Guardian PIN"))})
+        child_pin = getattr(obj.child, 'pickup_pin', None)
+        if child_pin:
+            pins.append({"code": child_pin, "label": str(_("Child PIN"))})
+        return pins
 
-    def get_activePickup(self, obj):
-        # For now return the assigned stop
-        if obj.stop:
-            return {
-                "id": str(obj.stop.id),
-                "description": obj.stop.name,
-                "gMapsUrl": "",
-                "coords": [float(obj.stop.latitude), float(obj.stop.longitude)],
-                "type": "pickup",
-                "active": True
-            }
-        return None
+    def get_guardianContact(self, obj):
+        guardian = obj.child.guardian
+        if not guardian:
+            return None
+        return {
+            "primaryContactNum": str(guardian.phone_number) if guardian.phone_number else None,
+            "primaryContactRole": str(_("Guardian")),
+            "secondaryContactNum": str(guardian.secondary_phone) if guardian.secondary_phone else None,
+            "secondaryContactRole": str(_("Secondary Guardian")) if guardian.secondary_phone else None,
+        }
 
-    def get_activeDropoff(self, obj):
-        # For now return the assigned stop
-        if obj.stop:
-            return {
-                "id": str(obj.stop.id),
-                "description": obj.stop.name,
-                "gMapsUrl": "",
-                "coords": [float(obj.stop.latitude), float(obj.stop.longitude)],
-                "type": "dropoff",
-                "active": True
-            }
-        return None
-
-    def get_boardedBus(self, obj):
+    def get_pickedUp(self, obj):
         from trips.enums import TripChildStatusChoices
-        return obj.status == TripChildStatusChoices.PICKED_UP
+        return obj.status in [
+            TripChildStatusChoices.PICKED_UP,
+            TripChildStatusChoices.DROPPED_OFF
+        ]
 
     def get_droppedOff(self, obj):
         from trips.enums import TripChildStatusChoices
         return obj.status == TripChildStatusChoices.DROPPED_OFF
+
+    def get_latestMessage(self, obj):
+        from children.models import GuardianMessage
+        msg = GuardianMessage.objects.filter(student=obj.child).order_by('-created_at').first()
+        if msg:
+            return {
+                "content": msg.content,
+                "createdAt": msg.created_at.isoformat(),
+            }
+        return None
+
+    def get_activePickup(self, obj):
+        """
+        Priority:
+        1. An accepted LocationChangeRequest for today for this child
+        2. The student's assigned RouteStop
+        3. None
+        """
+        from django.utils import timezone
+        from children.models import LocationChangeRequest
+        from children.enums import LocationChangeStatus
+
+        today = timezone.now().date()
+
+        change_request = LocationChangeRequest.objects.filter(
+            students=obj.child,
+            target_date=today,
+            status=LocationChangeStatus.ACCEPTED,
+        ).select_related('new_location').first()
+
+        if change_request and change_request.new_location:
+            loc = change_request.new_location
+            lat = float(loc.latitude)
+            lng = float(loc.longitude)
+            gmaps = loc.gmaps_url or f"https://www.google.com/maps/search/?api=1&query={lat},{lng}"
+            return {
+                "description": loc.description,
+                "gMapsUrl": gmaps,
+                "coords": [lat, lng],
+            }
+
+        if obj.stop:
+            lat = float(obj.stop.latitude)
+            lng = float(obj.stop.longitude)
+            gmaps = f"https://www.google.com/maps/search/?api=1&query={lat},{lng}"
+            return {
+                "description": obj.stop.name,
+                "gMapsUrl": gmaps,
+                "coords": [lat, lng],
+            }
+
+        return None
 
 
 class TripUpdateSerializer(serializers.Serializer):
@@ -123,7 +150,6 @@ class TripDetailsSerializer(serializers.ModelSerializer):
         return obj.status == TripStatusChoices.IN_PROGRESS
 
     def get_licencePlateLetters(self, obj):
-        # Assuming plate number format "ABC 123"
         if obj.bus and obj.bus.plate_number:
             parts = obj.bus.plate_number.split()
             return parts[0] if parts else ""
@@ -150,7 +176,7 @@ class TripDetailsSerializer(serializers.ModelSerializer):
 
     def get_tripUpdate(self, obj):
         return {
-            "eta": 0, # Skip for now
+            "eta": 0,
             "busCoords": [float(obj.current_latitude or 0), float(obj.current_longitude or 0)]
         }
 
