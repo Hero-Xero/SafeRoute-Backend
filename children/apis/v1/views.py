@@ -142,70 +142,87 @@ class AbsenceAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class GuardianMessageAPIView(generics.CreateAPIView):
+class GuardianMessageAPIView(APIView):
     """
     C4. POST /api/v1/guardian/messages
-    Sends a message from a guardian regarding a student.
+    Sends a message from a guardian to one or more students.
+    Body: { "studentIds": [12, 9], "content": "Running late!" }
     """
-    serializer_class = GuardianMessageSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def perform_create(self, serializer):
-        message = serializer.save(guardian=self.request.user)
+    def post(self, request):
+        serializer = GuardianMessageSerializer(data=request.data)
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+        students = serializer.validated_data['studentIds']
+        content = serializer.validated_data['content']
+        guardian = request.user
+
+        from children.models import GuardianMessage
         from trips.models import TripChild
         from trips.enums import TripStatusChoices
-        trip_child = TripChild.objects.filter(
-            child=message.student,
-            trip__status=TripStatusChoices.IN_PROGRESS
-        ).first()
 
-        if trip_child:
-            from channels.layers import get_channel_layer
-            from asgiref.sync import async_to_sync
-            channel_layer = get_channel_layer()
-            async_to_sync(channel_layer.group_send)(
-                f'trip_{trip_child.trip.id}',
-                {
-                    'type': 'trip_guardian_message',
-                    'data': {
-                        'student_id': message.student.id,
-                        'content': message.content,
-                        'guardian_name': f"{self.request.user.first_name} {self.request.user.last_name}"
+        created = []
+        for child in students:
+            message = GuardianMessage.objects.create(
+                guardian=guardian,
+                student=child,
+                content=content
+            )
+            created.append({"studentId": child.id, "studentName": child.full_name})
+
+            # WebSocket broadcast if trip is active
+            trip_child = TripChild.objects.filter(
+                child=child,
+                trip__status=TripStatusChoices.IN_PROGRESS
+            ).first()
+
+            if trip_child:
+                from channels.layers import get_channel_layer
+                from asgiref.sync import async_to_sync
+                channel_layer = get_channel_layer()
+                async_to_sync(channel_layer.group_send)(
+                    f'trip_{trip_child.trip.id}',
+                    {
+                        'type': 'trip_guardian_message',
+                        'data': {
+                            'student_id': child.id,
+                            'content': content,
+                            'guardian_name': f"{guardian.first_name} {guardian.last_name}".strip()
+                        }
                     }
-                }
-            )
+                )
 
-        # Send push notification to assistant
-        if trip_child and trip_child.trip.assistant:
-            from notifications.models import Notification, NotificationChannelChoices, NotificationStatusChoices
-            from notifications.tasks import send_push_notification_task
-            from rq import Queue
-            from redis import Redis
-            from django.conf import settings
+                # Push notification to assistant
+                if trip_child.trip.assistant:
+                    from notifications.models import Notification, NotificationChannelChoices, NotificationStatusChoices
+                    from notifications.tasks import send_push_notification_task
+                    from rq import Queue
+                    from redis import Redis
+                    from django.conf import settings
 
-            assistant = trip_child.trip.assistant
-            guardian_name = f"{self.request.user.first_name} {self.request.user.last_name}".strip(
-            )
-            student_name = message.student.first_name
+                    notification = Notification.objects.create(
+                        user=trip_child.trip.assistant,
+                        title=f"Message from {guardian.first_name} {guardian.last_name}".strip(),
+                        body=f"Re: {child.first_name} — {content}",
+                        type='guardian_message',
+                        channel=NotificationChannelChoices.PUSH,
+                        status=NotificationStatusChoices.PENDING,
+                        data={
+                            'student_id': str(child.id),
+                            'guardian_id': str(guardian.id),
+                            'trip_id': str(trip_child.trip.id),
+                        }
+                    )
+                    redis_conn = Redis(
+                        host=getattr(settings, 'REDIS_HOST', 'localhost'),
+                        port=int(getattr(settings, 'REDIS_PORT', 6379))
+                    )
+                    Queue('default', connection=redis_conn).enqueue(send_push_notification_task, notification.id)
 
-            notification = Notification.objects.create(
-                user=assistant,
-                title=f"Message from {guardian_name}",
-                body=f"Re: {student_name} — {message.content}",
-                type='guardian_message',
-                channel=NotificationChannelChoices.PUSH,
-                status=NotificationStatusChoices.PENDING,
-                data={
-                    'student_id': str(message.student.id),
-                    'guardian_id': str(self.request.user.id),
-                    'trip_id': str(trip_child.trip.id),
-                }
-            )
-
-            redis_conn = Redis(
-                host=getattr(settings, 'REDIS_HOST', 'localhost'),
-                port=int(getattr(settings, 'REDIS_PORT', 6379))
-            )
-            q = Queue('default', connection=redis_conn)
-            q.enqueue(send_push_notification_task, notification.id)
+        return Response({
+            "message": _("Message sent successfully."),
+            "sentTo": created,
+            "content": content,
+        }, status=status.HTTP_201_CREATED)

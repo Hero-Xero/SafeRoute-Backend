@@ -76,13 +76,9 @@ class AbsenceRequestSerializer(serializers.Serializer):
     notes = serializers.CharField(required=False, allow_blank=True)
 
 
-class GuardianMessageSerializer(serializers.ModelSerializer):
-    studentId = serializers.PrimaryKeyRelatedField(
-        source='student', queryset=Child.objects.all()
+class GuardianMessageSerializer(serializers.Serializer):
+    studentIds = serializers.ListField(
+        child=serializers.PrimaryKeyRelatedField(queryset=Child.objects.all()),
+        min_length=1
     )
-
-    class Meta:
-        from children.models import GuardianMessage
-        model = GuardianMessage
-        fields = ['id', 'studentId', 'content', 'created_at']
-        read_only_fields = ['id', 'created_at']
+    content = serializers.CharField()
